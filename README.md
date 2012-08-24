@@ -8,7 +8,7 @@ You need to [install Pandoc](http://johnmacfarlane.net/pandoc/installing.html), 
 
 **With the Package Control plugin:** The easiest way to install Pandoc is through Package Control, which can be found at this site: http://wbond.net/sublime_packages/package_control
 
-**Without Git:** Download the latest source from [GitHub](https://github.com/tbfisher/Pandoc) and copy the Pandoc folder to your Sublime Text "Packages" directory.
+**Without Git:** Download the latest source from [GitHub](https://github.com/tbfisher/sublimetext-Pandoc) and copy the Pandoc folder to your Sublime Text "Packages" directory.
 
 **With Git:** Clone the repository in your Sublime Text "Packages" directory:
 
