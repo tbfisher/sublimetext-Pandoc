@@ -12,7 +12,7 @@ You need to [install Pandoc](http://johnmacfarlane.net/pandoc/installing.html), 
 
 **With Git:** Clone the repository in your Sublime Text "Packages" directory:
 
-    git clone https://github.com/tbfisher/Pandoc.git
+    git clone https://github.com/tbfisher/sublimetext-Pandoc.git
 
 
 The "Packages" directory is located at:
