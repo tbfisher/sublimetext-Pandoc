@@ -1,0 +1,127 @@
+{
+
+  // define to/from formats and pandoc options
+  // see http://johnmacfarlane.net/pandoc/README.html#options
+
+  "formats": {
+
+    // keyed on a format description, with values:
+    // - pandoc: pandoc id (-f or -t values)
+    // - scope: input sublime scope. Missing implies pandoc can not accept the
+    //   format as input
+    // - syntax_file: sublime syntax file of output format, will set output to
+    //   this syntax
+    // - from: list of pandoc options to add when used as input
+    // - to: list of pandoc options to add when used as output
+
+    "AsciiDoc": {
+      "pandoc": "asciidoc"
+    },
+    "LaTeX beamer slide show": {
+      "pandoc": "beamer",
+      "syntax_file": "Packages/LaTeX/LaTeX Beamer.tmLanguage"
+    },
+    "ConTeXt": {
+      "pandoc": "context",
+      "syntax_file": "Packages/LaTeX/LaTeX.tmLanguage"
+    },
+    "DocBook XML": {
+      "pandoc": "docbook",
+      "scope": "text.xml",
+      "syntax_file": "Packages/XML/XML.tmLanguage"
+    },
+    "Word docx": {
+      "pandoc": "docx"
+    },
+    "HTML5 + javascript slide show": {
+      "pandoc": "dzslides",
+      "syntax_file": "Packages/HTML/HTML.tmLanguage"
+    },
+    "EPUB book": {
+      "pandoc": "epub",
+      "syntax_file": "Packages/XML/XML.tmLanguage"
+    },
+    "XHTML 1": {
+      "pandoc": "html",
+      "scope": "text.html",
+      "syntax_file": "Packages/HTML/HTML.tmLanguage"
+    },
+    "HTML 5": {
+      "pandoc": "html5",
+      "syntax_file": "Packages/HTML/HTML.tmLanguage"
+    },
+    "JSON version of native AST": {
+      "pandoc": "json",
+      "scope": "source.json",
+      "syntax_file": "Packages/JavaScript/JSON.tmLanguage"
+    },
+    "LaTeX": {
+      "pandoc": "latex",
+      "scope": "text.tex.latex",
+      "syntax_file": "Packages/LaTeX/LaTeX.tmLanguage"
+    },
+    "Groff man": {
+      "pandoc": "man"
+    },
+    "Markdown": {
+      "pandoc": "markdown",
+      "scope": "text.html.markdown",
+      "syntax_file": "Packages/Markdown/Markdown.tmLanguage",
+      // pandoc by default uses an enhanced version of markdown, see
+      // http://johnmacfarlane.net/pandoc/README.html#pandocs-markdown
+      // to disable, add "--strict" to "to" or "from"
+      "to": ["--no-wrap", "--atx-headers"]
+    },
+    "MediaWiki markup": {
+      "pandoc": "mediawiki"
+    },
+    "Native Haskell": {
+      "pandoc": "native",
+      "scope": "source.haskell",
+      "syntax_file": "Packages/Haskell/Haskell.tmLanguage"
+    },
+    "OpenOffice text document": {
+      "pandoc": "odt"
+    },
+    "OpenDocument XML": {
+      "pandoc": "opendocument",
+      "syntax_file": "Packages/XML/XML.tmLanguage"
+    },
+    "rich text format": {
+      "pandoc": "rtf"
+    },
+    "Emacs Org-Mode": {
+      "pandoc": "org"
+    },
+    "plain text": {
+      "pandoc": "plain",
+      "syntax_file": "Packages/Text/Plain text.tmLanguage"
+    },
+    "reStructuredText": {
+      "pandoc": "rst",
+      "scope": "text.restructuredtext",
+      "syntax_file": "Packages/RestructuredText/reStructuredText.tmLanguage"
+    },
+    "S5 HTML and javascript slide show": {
+      "pandoc": "s5",
+      "syntax_file": "Packages/HTML/HTML.tmLanguage"
+    },
+    "Slideous HTML and javascript slide show": {
+      "pandoc": "slideous",
+      "syntax_file": "Packages/HTML/HTML.tmLanguage"
+    },
+    "Slidy HTML and javascript slide show": {
+      "pandoc": "slidy",
+      "syntax_file": "Packages/HTML/HTML.tmLanguage"
+    },
+    "GNU Texinfo": {
+      "pandoc": "texinfo",
+      "syntax_file": "Packages/LaTeX/LaTeX Beamer.tmLanguage"
+    },
+    "Textile": {
+      "pandoc": "textile",
+      "scope": "text.html.textile",
+      "syntax_file": "Packages/Textile/Textile.tmLanguage"
+    }
+  }
+}
