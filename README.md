@@ -1,8 +1,8 @@
-# Pandoc
+# Pandoc Plugin for Sublime Text 2
 
-This plugin uses [Pandoc](http://johnmacfarlane.net/pandoc/) to convert text from one markup format into another.
+A [Sublime Text 2](http://www.sublimetext.com/2) plugin that uses [Pandoc](http://johnmacfarlane.net/pandoc/) to convert text from one markup format into another.
 
-## Installing
+## Installation
 
 You need to [install Pandoc](http://johnmacfarlane.net/pandoc/installing.html), and this module:
 
