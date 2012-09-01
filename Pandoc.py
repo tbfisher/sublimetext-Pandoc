@@ -24,6 +24,7 @@
 import sublime
 import sublime_plugin
 import subprocess
+import tempfile
 
 
 class PandocCommand(sublime_plugin.WindowCommand):
@@ -53,18 +54,29 @@ class PandocCommand(sublime_plugin.WindowCommand):
                 '"not configured as a format Pandoc can convert.')
             return
 
-        # run pandoc
+        # pandoc params
         cmd = ['pandoc']
+        # configured options
         if 'from' in format_from:
             cmd.extend(format_from['from'])
         if 'to' in format_to:
             cmd.extend(format_to['to'])
+        # if -o required, write to temp file
+        tf = False
+        if format_to['pandoc'] in ['docx', 'epub']:
+            if not ('to' in format_to and '-o' in format_to['to']):
+                tf = tempfile.NamedTemporaryFile().name
+                cmd.extend(['-o', tf])
         cmd.extend(['-f', format_from['pandoc'], '-t', format_to['pandoc']])
+
+        # run pandoc
         process = subprocess.Popen(cmd, shell=False, stdin=subprocess.PIPE,
             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         result, error = process.communicate(contents.encode('utf-8'))
 
         # replace buffer and set syntax
+        if tf:
+            sublime.message_dialog('Wrote to file' + tf)
         if result:
             edit = view.begin_edit()
             view.replace(edit, region, result)
