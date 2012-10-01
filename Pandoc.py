@@ -66,7 +66,8 @@ class PandocCommand(sublime_plugin.WindowCommand):
         if format_to['pandoc'] in ['docx', 'epub']:
             if not ('to' in format_to and '-o' in format_to['to']):
                 tf = tempfile.NamedTemporaryFile().name
-                cmd.extend(['-o', tf])
+                tfname =  tf + "." + format_to['pandoc']
+                cmd.extend(['-o', tfname])
         cmd.extend(['-f', format_from['pandoc'], '-t', format_to['pandoc']])
 
         # run pandoc
@@ -76,7 +77,10 @@ class PandocCommand(sublime_plugin.WindowCommand):
 
         # replace buffer and set syntax
         if tf:
-            sublime.message_dialog('Wrote to file' + tf)
+            if format_to['pandoc'] == 'docx':
+                subprocess.call(["open", tfname])
+            else:
+                sublime.message_dialog('Wrote to file ' + tfname)
         if result:
             edit = view.begin_edit()
             view.replace(edit, region, result)
