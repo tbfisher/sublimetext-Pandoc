@@ -77,7 +77,7 @@ class PandocCommand(sublime_plugin.WindowCommand):
 
         # replace buffer and set syntax
         if tf:
-            if format_to['pandoc'] == 'docx':
+            if format_to['pandoc'] == 'docx' && sublime_plugin.platform() == 'osx':
                 subprocess.call(["open", tfname])
             else:
                 sublime.message_dialog('Wrote to file ' + tfname)
