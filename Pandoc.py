@@ -56,7 +56,7 @@ class PandocCommand(sublime_plugin.WindowCommand):
             return
 
         # pandoc params
-        cmd = [self.find_binary('pandoc')]
+        cmd = [self._find_binary('pandoc')]
         # configured options
         if 'from' in format_from:
             cmd.extend(format_from['from'])
@@ -67,7 +67,7 @@ class PandocCommand(sublime_plugin.WindowCommand):
         if format_to['pandoc'] in ['docx', 'epub']:
             if not ('to' in format_to and '-o' in format_to['to']):
                 tf = tempfile.NamedTemporaryFile().name
-                tfname =  tf + "." + format_to['pandoc']
+                tfname = tf + "." + format_to['pandoc']
                 cmd.extend(['-o', tfname])
         cmd.extend(['-f', format_from['pandoc'], '-t', format_to['pandoc']])
 
@@ -76,12 +76,13 @@ class PandocCommand(sublime_plugin.WindowCommand):
             stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         result, error = process.communicate(contents.encode('utf-8'))
 
-        # replace buffer and set syntax
+        # write some formats to tmp file and possibly open
         if tf:
             if format_to['pandoc'] == 'docx' and sublime.platform() == 'osx':
                 subprocess.call(["open", tfname])
             else:
                 sublime.message_dialog('Wrote to file ' + tfname)
+        # replace buffer and set syntax
         if result:
             edit = view.begin_edit()
             view.replace(edit, region, result)
@@ -105,7 +106,7 @@ class PandocCommand(sublime_plugin.WindowCommand):
     def _setting(self, key):
         return sublime.load_settings('Pandoc.sublime-settings').get(key)
 
-    def find_binary(self, name):
+    def _find_binary(self, name):
         if self._setting('pandoc-path') is not None:
             return os.path.join(self._setting('pandoc-path'), name)
 
@@ -123,4 +124,3 @@ class PandocCommand(sublime_plugin.WindowCommand):
                 return path
 
         return None
-
