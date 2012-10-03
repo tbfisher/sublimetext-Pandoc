@@ -25,6 +25,7 @@ import sublime
 import sublime_plugin
 import subprocess
 import tempfile
+import os
 
 
 class PandocCommand(sublime_plugin.WindowCommand):
@@ -55,7 +56,7 @@ class PandocCommand(sublime_plugin.WindowCommand):
             return
 
         # pandoc params
-        cmd = ['pandoc']
+        cmd = [self.find_binary('pandoc')]
         # configured options
         if 'from' in format_from:
             cmd.extend(format_from['from'])
@@ -77,7 +78,7 @@ class PandocCommand(sublime_plugin.WindowCommand):
 
         # replace buffer and set syntax
         if tf:
-            if format_to['pandoc'] == 'docx' && sublime_plugin.platform() == 'osx':
+            if format_to['pandoc'] == 'docx' and sublime.platform() == 'osx':
                 subprocess.call(["open", tfname])
             else:
                 sublime.message_dialog('Wrote to file ' + tfname)
@@ -103,3 +104,23 @@ class PandocCommand(sublime_plugin.WindowCommand):
 
     def _setting(self, key):
         return sublime.load_settings('Pandoc.sublime-settings').get(key)
+
+    def find_binary(self, name):
+        if self._setting('pandoc-path') is not None:
+            return os.path.join(self._setting('pandoc-path'), name)
+
+        # Try the path first
+        for dir in os.environ['PATH'].split(os.pathsep):
+            path = os.path.join(dir, name)
+            if os.path.exists(path):
+                return path
+
+        dirs = ['/usr/local/bin']
+
+        for dir in dirs:
+            path = os.path.join(dir, name)
+            if os.path.exists(path):
+                return path
+
+        return None
+

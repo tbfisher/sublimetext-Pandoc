@@ -2,7 +2,6 @@
 
   // define to/from formats and pandoc options
   // see http://johnmacfarlane.net/pandoc/README.html#options
-
   "formats": {
 
     // keyed on a format description, with values:
@@ -123,5 +122,10 @@
       "scope": "text.html.textile",
       "syntax_file": "Packages/Textile/Textile.tmLanguage"
     }
-  }
+  },
+    /* 
+        Sets the path to the pandoc binary. Defaults to /usr/local/bin
+
+    */
+  "pandoc-path": null
 }
