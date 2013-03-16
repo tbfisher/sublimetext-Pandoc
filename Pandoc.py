@@ -85,7 +85,7 @@ class PandocCommand(sublime_plugin.WindowCommand):
         # replace buffer and set syntax
         if result:
             edit = view.begin_edit()
-            view.replace(edit, region, result)
+            view.replace(edit, region, result.decode('utf8'))
             if 'syntax_file' in format_to:
                 view.set_syntax_file(format_to['syntax_file'])
             view.end_edit(edit)
