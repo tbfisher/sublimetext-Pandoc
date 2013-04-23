@@ -31,6 +31,12 @@ import os
 class PandocCommand(sublime_plugin.WindowCommand):
 
     def run(self):
+        # the following helps pandoc find the pdf engine binary (such as pdflatex)
+        # otherwise, pandoc will get very confused and sad when you try to generate PDF with it
+        texbin = self._setting('texbin-path') or '/usr/texbin'
+        if texbin not in os.environ["PATH"]:
+            os.environ["PATH"] += ":" + texbin
+
         self.window.show_quick_panel(
             self._setting('formats').keys(), self.transform)
 
@@ -65,12 +71,13 @@ class PandocCommand(sublime_plugin.WindowCommand):
             cmd.extend(format_to['to'])
         # if -o required, write to temp file
         tf = False
-        if format_to['pandoc'] in ['docx', 'epub']:
+        if format_to['pandoc'] in ['docx', 'epub', 'pdf']:
             if not ('to' in format_to and '-o' in format_to['to']):
                 tf = tempfile.NamedTemporaryFile().name
                 tfname = tf + "." + format_to['pandoc']
                 cmd.extend(['-o', tfname])
-        cmd.extend(['-f', format_from['pandoc'], '-t', format_to['pandoc']])
+        if format_to['pandoc'] != 'pdf':    # PDF output exception
+            cmd.extend(['-f', format_from['pandoc'], '-t', format_to['pandoc']])
 
         # run pandoc
         process = subprocess.Popen(
@@ -80,7 +87,7 @@ class PandocCommand(sublime_plugin.WindowCommand):
 
         # write some formats to tmp file and possibly open
         if tf:
-            if format_to['pandoc'] == 'docx' and sublime.platform() == 'osx':
+            if format_to['pandoc'] in ['docx', 'epub', 'pdf'] and sublime.platform() == 'osx':
                 subprocess.call(["open", tfname])
             else:
                 sublime.message_dialog('Wrote to file ' + tfname)

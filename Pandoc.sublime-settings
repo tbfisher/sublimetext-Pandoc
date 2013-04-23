@@ -86,7 +86,7 @@
       "pandoc": "opendocument",
       "syntax_file": "Packages/XML/XML.tmLanguage"
     },
-    "rich text format": {
+    "Rich Text Format": {
       "pandoc": "rtf"
     },
     "Emacs Org-Mode": {
@@ -121,11 +121,17 @@
       "pandoc": "textile",
       "scope": "text.html.textile",
       "syntax_file": "Packages/Textile/Textile.tmLanguage"
+    },
+    "PDF": {
+      "pandoc": "pdf"
     }
   },
 
   // Sets the path to the pandoc binary.
   "pandoc-path": null,
+
+  // Sets the path to texbin. For mac, this usually defaults to "/usr/texbin"
+  "texbin-path": null,
 
   // Opens output in new buffer (instead of replacing input in same)
   "new-buffer": 1
