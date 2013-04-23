@@ -125,5 +125,8 @@
   },
 
   // Sets the path to the pandoc binary. Defaults to /usr/local/bin
-  "pandoc-path": null
+  "pandoc-path": null,
+
+  // Opens output in new buffer (instead of replacing input in same)
+  "new-buffer": 1
 }

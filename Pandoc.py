@@ -82,16 +82,27 @@ class PandocCommand(sublime_plugin.WindowCommand):
                 subprocess.call(["open", tfname])
             else:
                 sublime.message_dialog('Wrote to file ' + tfname)
-        
-        # replace buffer and set syntax
+
         if result:
-            w = view.window()
-            w.new_file()
-            edit = w.active_view().begin_edit()
-            w.active_view().replace(edit, region, result.decode('utf8'))
-            if 'syntax_file' in format_to:
-                w.active_view().set_syntax_file(format_to['syntax_file'])
-            w.active_view().end_edit(edit)
+
+            # write to new buffer and set syntax
+            if self._setting('new-buffer'):
+                w = view.window()
+                w.new_file()
+                edit = w.active_view().begin_edit()
+                w.active_view().replace(edit, region, result.decode('utf8'))
+                if 'syntax_file' in format_to:
+                    w.active_view().set_syntax_file(format_to['syntax_file'])
+                w.active_view().end_edit(edit)
+
+            # replace buffer and set syntax
+            else:
+                edit = view.begin_edit()
+                view.replace(edit, region, result.decode('utf8'))
+                if 'syntax_file' in format_to:
+                    view.set_syntax_file(format_to['syntax_file'])
+                view.end_edit(edit)
+
         if error:
             sublime.error_message(error)
 
