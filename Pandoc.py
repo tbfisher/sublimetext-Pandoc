@@ -50,7 +50,8 @@ class PandocCommand(sublime_plugin.WindowCommand):
         # from format
         format_from = self._from(view)
         if format_from is None:
-            sublime.message_dialog('Current scope "' +
+            sublime.message_dialog(
+                'Current scope "' +
                 view.scope_name(view.sel()[0].end()).strip() +
                 '"not configured as a format Pandoc can convert.')
             return
@@ -72,8 +73,9 @@ class PandocCommand(sublime_plugin.WindowCommand):
         cmd.extend(['-f', format_from['pandoc'], '-t', format_to['pandoc']])
 
         # run pandoc
-        process = subprocess.Popen(cmd, shell=False, stdin=subprocess.PIPE,
-            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        process = subprocess.Popen(
+            cmd, shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE)
         result, error = process.communicate(contents.encode('utf-8'))
 
         # write some formats to tmp file and possibly open
