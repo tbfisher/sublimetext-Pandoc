@@ -42,3 +42,13 @@ In
         Pandoc.sublime-settings
 
 you can fully configure the available formats, and configure the Pandoc options to customize transformation.
+
+In addition
+
+* `pandoc-path`:
+
+    Sets the path to the pandoc binary.
+
+* `new-buffer`:
+
+    Opens output in new buffer (instead of replacing input in same)
