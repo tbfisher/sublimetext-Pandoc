@@ -123,8 +123,13 @@ class PandocCommand(sublime_plugin.WindowCommand):
         return sublime.load_settings('Pandoc.sublime-settings').get(key)
 
     def _find_binary(self, name):
-        if self._setting('pandoc-path') is not None:
-            return os.path.join(self._setting('pandoc-path'), name)
+        path = self._setting(name + '-path')
+        if path is not None:
+            if os.path.exists(path):
+                return path
+            msg = 'configured path for {0} {1} not found.'.format(name, path)
+            sublime.error_message(msg)
+            return None
 
         # Try the path first
         for dir in os.environ['PATH'].split(os.pathsep):
