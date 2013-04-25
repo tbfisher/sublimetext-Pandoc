@@ -34,12 +34,14 @@ class PandocCommand(sublime_plugin.WindowCommand):
         self.window.show_quick_panel(
             self._setting('formats').keys(), self.transform)
 
-    def transform(self, format_to):
-        # to format
-        formats = self._setting('formats')
-        if format_to == -1:
+    def transform(self, format_dest):
+        formats = {'src': None, 'dest': None}
+
+        # dest format
+        if format_dest == -1:
             return
-        format_to = formats[formats.keys()[format_to]]
+        format_dest = self._setting('formats').keys()[format_dest]
+        formats['dest'] = self._format_conf(format_dest)
 
         view = self.window.active_view()
 
@@ -47,9 +49,9 @@ class PandocCommand(sublime_plugin.WindowCommand):
         region = sublime.Region(0, view.size())
         contents = view.substr(region)
 
-        # from format
-        format_from = self._from(view)
-        if format_from is None:
+        # source format
+        formats['src'] = self._src_format(view)
+        if formats['src'] is None:
             sublime.message_dialog(
                 'Current scope "' +
                 view.scope_name(view.sel()[0].end()).strip() +
@@ -59,23 +61,23 @@ class PandocCommand(sublime_plugin.WindowCommand):
         # pandoc params
         cmd = [self._find_binary('pandoc')]
         # configured options
-        if 'from' in format_from:
-            cmd.extend(format_from['from'])
-        if 'to' in format_to:
-            cmd.extend(format_to['to'])
+        if 'from' in formats['src']:
+            cmd.extend(formats['src']['from'])
+        if 'to' in formats['dest']:
+            cmd.extend(formats['dest']['to'])
         # if -o required, write to temp file
         tf = False
-        if format_to['pandoc'] in ['docx', 'epub', 'pdf']:
-            if not ('to' in format_to and '-o' in format_to['to']):
+        if formats['dest']['key'] in ['docx', 'epub', 'pdf']:
+            if not ('to' in formats['dest'] and '-o' in formats['dest']['to']):
                 tf = tempfile.NamedTemporaryFile().name
-                tfname = tf + "." + format_to['pandoc']
+                tfname = tf + "." + formats['dest']['key']
                 cmd.extend(['-o', tfname])
         # PDF output
-        if format_to['pandoc'] == 'pdf':
+        if formats['dest']['key'] == 'pdf':
             # pandoc assumes pdf from destination file extension
             cmd.extend(['-f', formats['src']['key']])
         else:
-            cmd.extend(['-f', format_from['pandoc'], '-t', format_to['pandoc']])
+            cmd.extend(['-f', formats['src']['key'], '-t', formats['dest']['key']])
 
         # run pandoc
         process = subprocess.Popen(
@@ -85,7 +87,7 @@ class PandocCommand(sublime_plugin.WindowCommand):
 
         # write some formats to tmp file and possibly open
         if tf:
-            if format_to['pandoc'] in ['docx', 'epub', 'pdf'] and sublime.platform() == 'osx':
+            if formats['dest']['key'] in ['docx', 'epub', 'pdf'] and sublime.platform() == 'osx':
                 subprocess.call(["open", tfname])
             else:
                 sublime.message_dialog('Wrote to file ' + tfname)
@@ -98,34 +100,57 @@ class PandocCommand(sublime_plugin.WindowCommand):
                 w.new_file()
                 edit = w.active_view().begin_edit()
                 w.active_view().replace(edit, region, result.decode('utf8'))
-                if 'syntax_file' in format_to:
-                    w.active_view().set_syntax_file(format_to['syntax_file'])
+                if 'syntax_file' in formats['dest']:
+                    w.active_view().set_syntax_file(formats['dest']['syntax_file'])
                 w.active_view().end_edit(edit)
 
             # replace buffer and set syntax
             else:
                 edit = view.begin_edit()
                 view.replace(edit, region, result.decode('utf8'))
-                if 'syntax_file' in format_to:
-                    view.set_syntax_file(format_to['syntax_file'])
+                if 'syntax_file' in formats['dest']:
+                    view.set_syntax_file(formats['dest']['syntax_file'])
                 view.end_edit(edit)
 
         if error:
             sublime.error_message(error)
 
-    def _from(self, view):
-        max_key = None
+    def _src_format(self, view):
+        '''
+        use sublime.score_selector() to determine the current Pandoc format from
+        the current document syntax.
+        '''
+        max_label = None
         max_score = 0
-        for key, form in self._setting('formats').iteritems():
-            if 'scope' in form and form['scope'] != '':
-                score = view.score_selector(0, form['scope'])
+        for label in self._setting('formats').iterkeys():
+            conf = self._format_conf(label)
+            # scope implies pandoc can accept the format as input
+            if 'scope' in conf and conf['scope'] != '':
+                score = view.score_selector(0, conf['scope'])
                 if score > max_score:
                     max_score = score
-                    max_key = key
-        return self._setting('formats')[max_key]
+                    max_label = label
+        return self._format_conf(max_label)
 
     def _setting(self, key):
         return sublime.load_settings('Pandoc.sublime-settings').get(key)
+
+    def _format_conf(self, label):
+        '''
+        Generate a hash of format configuration.
+        @see Pandoc.sublime-settings
+
+        Keyword arguments:
+        label -- format label used in settings
+
+        Returns:
+        hash of any configured settings, plus "key" which is the pandoc format
+        (-f or -t values)
+        '''
+        key = self._setting('formats')[label]
+        conf = self._setting('format_' + key)
+        conf['key'] = key
+        return conf
 
     def _find_binary(self, name):
         path = self._setting(name + '-path')
@@ -137,15 +162,15 @@ class PandocCommand(sublime_plugin.WindowCommand):
             return None
 
         # Try the path first
-        for dir in os.environ['PATH'].split(os.pathsep):
-            path = os.path.join(dir, name)
+        for dirname in os.environ['PATH'].split(os.pathsep):
+            path = os.path.join(dirname, name)
             if os.path.exists(path):
                 return path
 
-        dirs = ['/usr/local/bin']
+        dirnames = ['/usr/local/bin']
 
-        for dir in dirs:
-            path = os.path.join(dir, name)
+        for dirname in dirnames:
+            path = os.path.join(dirname, name)
             if os.path.exists(path):
                 return path
 
