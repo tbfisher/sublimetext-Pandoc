@@ -60,9 +60,9 @@ class PandocCommand(sublime_plugin.WindowCommand):
         cmd = [self._find_binary('pandoc')]
         # configured options
         if 'from' in format_from:
-            cmd.extend(format_from['from'])
+            cmd.extend([format_from['from']])
         if 'to' in format_to:
-            cmd.extend(format_to['to'])
+            cmd.extend([format_to['to']])
         # if -o required, write to temp file
         tf = False
         if format_to['pandoc'] in ['docx', 'epub', 'pdf']:
