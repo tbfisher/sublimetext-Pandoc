@@ -31,12 +31,6 @@ import os
 class PandocCommand(sublime_plugin.WindowCommand):
 
     def run(self):
-        # the following helps pandoc find the pdf engine binary (such as pdflatex)
-        # otherwise, pandoc will get very confused and sad when you try to generate PDF with it
-        texbin = self._setting('texbin-path') or '/usr/texbin'
-        if texbin not in os.environ["PATH"]:
-            os.environ["PATH"] += ":" + texbin
-
         self.window.show_quick_panel(
             self._setting('formats').keys(), self.transform)
 
@@ -76,7 +70,10 @@ class PandocCommand(sublime_plugin.WindowCommand):
                 tf = tempfile.NamedTemporaryFile().name
                 tfname = tf + "." + format_to['pandoc']
                 cmd.extend(['-o', tfname])
-        if format_to['pandoc'] != 'pdf':    # PDF output exception
+        if format_to['pandoc'] == 'pdf':    # PDF output exception
+            engine = self._setting('latex-engine') or '/usr/texbin/pdflatex'
+            cmd.extend(['--latex-engine=' + engine])
+        else:
             cmd.extend(['-f', format_from['pandoc'], '-t', format_to['pandoc']])
 
         # run pandoc
