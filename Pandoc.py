@@ -72,8 +72,7 @@ class PandocCommand(sublime_plugin.WindowCommand):
                 cmd.extend(['-o', tfname])
         # PDF output
         if format_to['pandoc'] == 'pdf':
-            # pandoc assumes pdf from destination file extension
-            cmd.extend(['-f', format_from['pandoc']])
+            pass  # pandoc assumes pdf from destination file extension
         else:
             cmd.extend(['-f', format_from['pandoc'], '-t', format_to['pandoc']])
 
