@@ -70,9 +70,10 @@ class PandocCommand(sublime_plugin.WindowCommand):
                 tf = tempfile.NamedTemporaryFile().name
                 tfname = tf + "." + format_to['pandoc']
                 cmd.extend(['-o', tfname])
-        if format_to['pandoc'] == 'pdf':    # PDF output exception
-            engine = self._setting('latex-engine') or '/usr/texbin/pdflatex'
-            cmd.extend(['--latex-engine=' + engine])
+        # PDF output
+        if format_to['pandoc'] == 'pdf':
+            # pandoc assumes pdf from destination file extension
+            cmd.extend(['-f', format_from['pandoc']])
         else:
             cmd.extend(['-f', format_from['pandoc'], '-t', format_to['pandoc']])
 
