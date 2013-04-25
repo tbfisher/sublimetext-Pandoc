@@ -65,12 +65,16 @@ class PandocCommand(sublime_plugin.WindowCommand):
             cmd.extend(format_to['to'])
         # if -o required, write to temp file
         tf = False
-        if format_to['pandoc'] in ['docx', 'epub']:
+        if format_to['pandoc'] in ['docx', 'epub', 'pdf']:
             if not ('to' in format_to and '-o' in format_to['to']):
                 tf = tempfile.NamedTemporaryFile().name
                 tfname = tf + "." + format_to['pandoc']
                 cmd.extend(['-o', tfname])
-        cmd.extend(['-f', format_from['pandoc'], '-t', format_to['pandoc']])
+        if format_to['pandoc'] == 'pdf':    # PDF output exception
+            engine = self._setting('latex-engine') or '/usr/texbin/pdflatex'
+            cmd.extend(['--latex-engine=' + engine])
+        else:
+            cmd.extend(['-f', format_from['pandoc'], '-t', format_to['pandoc']])
 
         # run pandoc
         process = subprocess.Popen(
@@ -80,7 +84,7 @@ class PandocCommand(sublime_plugin.WindowCommand):
 
         # write some formats to tmp file and possibly open
         if tf:
-            if format_to['pandoc'] == 'docx' and sublime.platform() == 'osx':
+            if format_to['pandoc'] in ['docx', 'epub', 'pdf'] and sublime.platform() == 'osx':
                 subprocess.call(["open", tfname])
             else:
                 sublime.message_dialog('Wrote to file ' + tfname)

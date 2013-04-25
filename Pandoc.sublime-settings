@@ -86,7 +86,7 @@
       "pandoc": "opendocument",
       "syntax_file": "Packages/XML/XML.tmLanguage"
     },
-    "rich text format": {
+    "Rich Text Format": {
       "pandoc": "rtf"
     },
     "Emacs Org-Mode": {
@@ -121,11 +121,19 @@
       "pandoc": "textile",
       "scope": "text.html.textile",
       "syntax_file": "Packages/Textile/Textile.tmLanguage"
+    },
+    "PDF": {
+      "pandoc": "pdf"
     }
   },
 
   // Sets the path to the pandoc binary.
   "pandoc-path": null,
+
+  // Sets the LaTeX engine (choose from pdflatex|lualatex|xelatex). 
+  // This may need to be specified with a full path (e.g. "/usr/texbin/pdflatex").
+  // Defaults to "/usr/texbin/pdflatex"
+  "latex-engine": null,
 
   // Opens output in new buffer (instead of replacing input in same)
   "new-buffer": 1
