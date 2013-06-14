@@ -87,8 +87,11 @@ class PandocCommand(sublime_plugin.WindowCommand):
 
         # write some formats to tmp file and possibly open
         if tf:
-            if formats['dest']['key'] in ['docx', 'epub', 'pdf'] and sublime.platform() == 'osx':
-                subprocess.call(["open", tfname])
+            if formats['dest']['key'] in ['docx', 'epub', 'pdf']:
+                if sublime.platform() == 'osx':
+                    subprocess.call(["open", tfname])
+                elif sublime.platform() == 'windows':
+                    os.startfile(tfname)
             else:
                 sublime.message_dialog('Wrote to file ' + tfname)
 
