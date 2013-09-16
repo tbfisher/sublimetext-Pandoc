@@ -17,20 +17,28 @@
     "DocBook XML": "docbook",
     "Word docx": "docx",
     "HTML5 + javascript slide show": "dzslides",
-    "EPUB book": "epub",
+    "EPUB v2": "epub",
+    "EPUB v3": "epub3",
+    "FictionBook2 e-book": "fb2",
+    "Haddock": "haddock",
     "XHTML 1": "html",
     "HTML 5": "html5",
     "JSON version of native AST": "json",
     "LaTeX": "latex",
     "Groff man": "man",
-    "Markdown": "markdown",
+    "Markdown (Pandoc extended)": "markdown",
+    "Markdown (Github extended)": "markdown_github",
+    "Markdown (PHP Markdown Extra extended)": "markdown_phpextra",
+    "Markdown (Strict)": "markdown_strict",
     "MediaWiki markup": "mediawiki",
     "Native Haskell": "native",
     "OpenOffice text document": "odt",
     "OpenDocument XML": "opendocument",
-    "PDF": "pdf",
-    "Rich Text Format": "rtf",
+    "OPML": "opml",
     "Emacs Org-Mode": "org",
+    "PDF": "pdf",
+    "reveal.js HTML5 + javascript slide show": "revealjs",
+    "Rich Text Format": "rtf",
     "plain text": "plain",
     "reStructuredText": "rst",
     "S5 HTML and javascript slide show": "s5",
@@ -41,9 +49,9 @@
   },
 
   // format configuration
-  // key: format-[key] where [key] is the Pandoc format key (-f or -t values)
+  // key: format_[key] where [key] is the Pandoc format key (-f or -t values)
   // - scope: input sublime scope. Missing implies pandoc can not accept the
-  //   format as input
+  //   format as input (@todo fix this, allow multiple input formats per scope)
   // - syntax_file: sublime syntax file of output format, will set output to
   //   this syntax
   // - from: list of pandoc options to add when used as input
@@ -56,7 +64,7 @@
     "syntax_file": "Packages/LaTeX/LaTeX.tmLanguage"
   },
   "format_docbook": {
-    "scope": "text.xml",
+    // "scope": "text.xml",
     "syntax_file": "Packages/XML/XML.tmLanguage"
   },
   "format_docx": {},
@@ -66,10 +74,15 @@
   "format_epub": {
     "syntax_file": "Packages/XML/XML.tmLanguage"
   },
+  "format_epub3": {
+    "syntax_file": "Packages/XML/XML.tmLanguage"
+  },
+  "format_fb2": {},
   "format_html": {
     "scope": "text.html",
     "syntax_file": "Packages/HTML/HTML.tmLanguage"
   },
+  "format_haddock": {},
   "format_html5": {
     "syntax_file": "Packages/HTML/HTML.tmLanguage"
   },
@@ -82,13 +95,27 @@
     "syntax_file": "Packages/LaTeX/LaTeX.tmLanguage"
   },
   "format_man": {},
+  // pandoc by default uses an enhanced version of markdown, see
+  // http://johnmacfarlane.net/pandoc/README.html#pandocs-markdown
+  // to disable:
+  //    -   pandoc <1.10: add "--strict" to "to" or "from"
+  //    -   pandoc >=1.10: use markdown_strict output format
   "format_markdown": {
     "scope": "text.html.markdown",
     "syntax_file": "Packages/Markdown/Markdown.tmLanguage",
-    // pandoc by default uses an enhanced version of markdown, see
-    // http://johnmacfarlane.net/pandoc/README.html#pandocs-markdown
-    // to disable, add "--strict" to "to" or "from"
     "to": ["--no-wrap", "--atx-headers"]
+  },
+  "format_markdown_github": {
+    // "scope": "text.html.markdown",
+    "syntax_file": "Packages/Markdown/Markdown.tmLanguage"
+  },
+  "format_markdown_phpextra": {
+    // "scope": "text.html.markdown",
+    "syntax_file": "Packages/Markdown/Markdown.tmLanguage"
+  },
+  "format_markdown_strict": {
+    // "scope": "text.html.markdown",
+    "syntax_file": "Packages/Markdown/Markdown.tmLanguage"
   },
   "format_mediawiki": {},
   "format_native": {
@@ -106,9 +133,16 @@
     "to": ["--latex-engine=/usr/texbin/pdflatex"]
   },
   "format_rtf": {},
+  "format_opml": {
+    // "scope": "text.xml",
+    "syntax_file": "Packages/XML/XML.tmLanguage"
+  },
   "format_org": {},
   "format_plain": {
     "syntax_file": "Packages/Text/Plain text.tmLanguage"
+  },
+  "format_revealjs": {
+    "syntax_file": "Packages/HTML/HTML.tmLanguage"
   },
   "format_rst": {
     "scope": "text.restructuredtext",
