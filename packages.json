@@ -6,12 +6,12 @@
       "description": "A Sublime Text 2 plugin that uses Pandoc to convert text from one markup format into another. Pandoc can convert documents in Markdown, reStructuredText, Textile, HTML, DocBook, or LaTeX to XHTML, HTML5, HTML slide shows using Slidy, Slideous, S5, or DZSlides, Microsoft Word docx, OpenOffice/LibreOffice ODT, OpenDocument XML, EPUB, DocBook, GNU TexInfo, Groff man pages, LaTeX, ConTeXt, LaTeX Beamer slides, PDF via LaTeX, Markdown, reStructuredText, AsciiDoc, MediaWiki markup, Emacs Org-Mode, and Textile.",
       "author": "tbfisher",
       "homepage": "https://github.com/tbfisher/sublimetext-Pandoc",
-      "last_modified": "2013-09-16 11:04:00",
+      "last_modified": "2013-11-23 00:00:00",
       "platforms": {
         "*": [
           {
-            "version": "1.2.2",
-            "url": "https://github.com/tbfisher/sublimetext-Pandoc/archive/1.2.2.zip"
+            "version": "1.2.3",
+            "url": "https://github.com/tbfisher/sublimetext-Pandoc/archive/1.2.3.zip"
           }
         ]
       }
