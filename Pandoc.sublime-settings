@@ -26,7 +26,7 @@
     "JSON version of native AST": "json",
     "LaTeX": "latex",
     "Groff man": "man",
-    "Markdown (Pandoc extended)": "markdown",
+    "Markdown": "markdown",
     "Markdown (Github extended)": "markdown_github",
     "Markdown (PHP Markdown Extra extended)": "markdown_phpextra",
     "Markdown (Strict)": "markdown_strict",
@@ -80,12 +80,10 @@
   "format_fb2": {},
   "format_html": {
     "scope": "text.html",
-    "syntax_file": "Packages/HTML/HTML.tmLanguage"
-  },
+    "syntax_file": "Packages/HTML/HTML.tmLanguage"  },
   "format_haddock": {},
   "format_html5": {
-    "syntax_file": "Packages/HTML/HTML.tmLanguage"
-  },
+    "syntax_file": "Packages/HTML/HTML.tmLanguage"  },
   "format_json": {
     "scope": "source.json",
     "syntax_file": "Packages/JavaScript/JSON.tmLanguage"
@@ -103,7 +101,8 @@
   "format_markdown": {
     "scope": "text.html.markdown",
     "syntax_file": "Packages/Markdown/Markdown.tmLanguage",
-    "to": ["--no-wrap", "--atx-headers"]
+    "to": ["--no-wrap", "--atx-headers"],
+    "from": ["--no-highlight"]
   },
   "format_markdown_github": {
     // "scope": "text.html.markdown",
