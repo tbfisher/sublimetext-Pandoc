@@ -78,10 +78,10 @@
     "syntax_file": "Packages/XML/XML.tmLanguage"
   },
   "format_fb2": {},
+  "format_haddock": {},
   "format_html": {
     "scope": "text.html",
     "syntax_file": "Packages/HTML/HTML.tmLanguage"  },
-  "format_haddock": {},
   "format_html5": {
     "syntax_file": "Packages/HTML/HTML.tmLanguage"  },
   "format_json": {
