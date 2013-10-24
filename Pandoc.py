@@ -67,7 +67,7 @@ class PandocCommand(sublime_plugin.WindowCommand):
             cmd.extend(formats['dest']['to'])
         # if -o required, write to temp file
         tf = False
-        if formats['dest']['key'] in ['docx', 'epub', 'pdf']:
+        if formats['dest']['key'] in ['docx', 'epub', 'pdf', 'odt']:
             if not ('to' in formats['dest'] and '-o' in formats['dest']['to']):
                 tf = tempfile.NamedTemporaryFile().name
                 tfname = tf + "." + formats['dest']['key']
