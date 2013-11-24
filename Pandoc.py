@@ -92,6 +92,8 @@ class PandocCommand(sublime_plugin.WindowCommand):
                     subprocess.call(["open", tfname])
                 elif sublime.platform() == 'windows':
                     os.startfile(tfname)
+                elif os.name == 'posix':
+                    subprocess.call(('xdg-open', tfname))
             except:
                 sublime.message_dialog('Wrote to file ' + tfname)
 
