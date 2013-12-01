@@ -116,7 +116,10 @@
     // "scope": "text.html.markdown",
     "syntax_file": "Packages/Markdown/Markdown.tmLanguage"
   },
-  "format_mediawiki": {},
+  "format_mediawiki": {
+    "scope": "text.html.mediawiki",
+    "syntax_file": "Packages/Mediawiker/Mediawiki.tmLanguage"
+  },
   "format_native": {
     "scope": "source.haskell",
     "syntax_file": "Packages/Haskell/Haskell.tmLanguage"
