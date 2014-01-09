@@ -7,6 +7,7 @@
       "labels": ["text manipulation", "markdown", "reStructuredText", "pandoc", "markup", "LaTeX"],
       "releases": [
         {
+          "sublime_text": "*",
           "details": "https://github.com/tbfisher/sublimetext-Pandoc/releases"
         }
       ]
