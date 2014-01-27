@@ -1,6 +1,6 @@
 [
     {
         "caption": "Pandoc",
-        "command": "pandoc"
+        "command": "prompt_pandoc"
     }
 ]

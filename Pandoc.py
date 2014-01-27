@@ -21,162 +21,172 @@
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 # OTHER DEALINGS IN THE SOFTWARE.
 
-import sublime
-import sublime_plugin
+import sublime, sublime_plugin
+from collections import OrderedDict
+import pprint
+import re
 import subprocess
 import tempfile
 import os
 
+# class ExampleCommand(sublime_plugin.TextCommand):
+#     def run(self, edit):
+#         self.view.insert(edit, 0, "Hello, World!")
 
-class PandocCommand(sublime_plugin.WindowCommand):
+class PromptPandocCommand(sublime_plugin.WindowCommand):
+
+    options = []
 
     def run(self):
-        self.window.show_quick_panel(
-            self._setting('formats').keys(), self.transform)
+        if self.window.active_view():
+            self.window.show_quick_panel(self.transformations(), self.transform)
 
-    def transform(self, format_dest):
-        formats = {'src': None, 'dest': None}
-
-        # dest format
-        if format_dest == -1:
-            return
-        format_dest = self._setting('formats').keys()[format_dest]
-        formats['dest'] = self._format_conf(format_dest)
-
+    def transformations(self):
+        '''Generates a ranked list of available transformations.'''
         view = self.window.active_view()
 
+        # hash of transformation ranks
+        ranked = {}
+        for label, settings in _s('transformations').items():
+            for scope in settings['scope'].keys():
+                score = view.score_selector(0, scope)
+                if not score: continue
+                if label not in ranked or ranked[label] < score:
+                    ranked[label] = score
+
+        if not len(ranked):
+            sublime.error_message(
+                'No transformations configured for the syntax '
+                + view.settings().get('syntax'))
+
+        # reverse sort
+        self.options = list(OrderedDict(sorted(ranked.items(), 
+            key=lambda t: t[1])).keys())
+        self.options.reverse()
+
+        return self.options
+
+    def transform(self, i):
+        if i == -1: return
+        transformation = _s('transformations')[self.options[i]]
+        self.window.active_view().run_command('pandoc', {
+            'transformation': transformation
+        })
+
+class PandocCommand(sublime_plugin.TextCommand):
+
+    def run(self, edit, transformation):
         # string to work with
-        region = sublime.Region(0, view.size())
-        contents = view.substr(region)
+        region = sublime.Region(0, self.view.size())
+        contents = self.view.substr(region)
 
-        # source format
-        formats['src'] = self._src_format(view)
-        if formats['src'] is None:
-            sublime.message_dialog(
-                'Current scope "' +
-                view.scope_name(view.sel()[0].end()).strip() +
-                '"not configured as a format Pandoc can convert.')
-            return
+        cmd = [_find_binary('pandoc', _s('pandoc-path'))]
 
-        # pandoc params
-        cmd = [self._find_binary('pandoc')]
-        # configured options
-        if 'from' in formats['src']:
-            cmd.extend(formats['src']['from'])
-        if 'to' in formats['dest']:
-            cmd.extend(formats['dest']['to'])
-        # if -o required, write to temp file
-        tf = False
-        if formats['dest']['key'] in ['docx', 'epub', 'pdf', 'odt']:
-            if not ('to' in formats['dest'] and '-o' in formats['dest']['to']):
-                tf = tempfile.NamedTemporaryFile().name
-                tfname = tf + "." + formats['dest']['key']
-                cmd.extend(['-o', tfname])
-        # PDF output
-        if formats['dest']['key'] == 'pdf':
-            # pandoc assumes pdf from destination file extension
-            cmd.extend(['-f', formats['src']['key']])
-        else:
-            cmd.extend(['-f', formats['src']['key'], '-t', formats['dest']['key']])
+        # from format
+        score = 0
+        for scope, c_iformat in transformation['scope'].items():
+            c_score = self.view.score_selector(0, scope)
+            if c_score <= score: continue
+            score = c_score
+            iformat = c_iformat
+        cmd.extend(['-f', iformat])
+
+        # configured parameters
+        cmd.extend(transformation['pandoc-arguments'])
+
+        # if write to file, add -o if necessary, set file path to output_path
+        oformat = get_arg_value(transformation['pandoc-arguments'], 
+            short=['t', 'w'], long=['to', 'write'])
+        _c(oformat)
+        if oformat is not None and oformat in _s('pandoc-format-file'):
+            output_path = get_arg_value(transformation['pandoc-arguments'], 
+                short=['o'], long=['output'])
+            if output_path is None:
+                # note the file extension matches the pandoc format name
+                output_path = tempfile.NamedTemporaryFile().name
+                _c(output_path)
+                output_path += "." + oformat
+                _c(output_path)
+                cmd.extend(['-o', output_path])
+            _c(output_path)
 
         # run pandoc
         process = subprocess.Popen(
             cmd, shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
             stderr=subprocess.PIPE)
         result, error = process.communicate(contents.encode('utf-8'))
-
-        # write some formats to tmp file and possibly open
-        if tf:
-            try:
-                if sublime.platform() == 'osx':
-                    subprocess.call(["open", tfname])
-                elif sublime.platform() == 'windows':
-                    os.startfile(tfname)
-                elif os.name == 'posix':
-                    subprocess.call(('xdg-open', tfname))
-            except:
-                sublime.message_dialog('Wrote to file ' + tfname)
-
-        if result:
-
-            # write to new buffer and set syntax
-            if self._setting('new-buffer'):
-                w = view.window()
-                w.new_file()
-                edit = w.active_view().begin_edit()
-                w.active_view().replace(edit, region, result.decode('utf8'))
-                if 'syntax_file' in formats['dest']:
-                    w.active_view().set_syntax_file(formats['dest']['syntax_file'])
-                w.active_view().end_edit(edit)
-
-            # replace buffer and set syntax
-            else:
-                edit = view.begin_edit()
-                view.replace(edit, region, result.decode('utf8'))
-                if 'syntax_file' in formats['dest']:
-                    view.set_syntax_file(formats['dest']['syntax_file'])
-                view.end_edit(edit)
+        _c(cmd)
 
         if error:
-            sublime.error_message(error)
+            sublime.error_message(error.decode('utf-8').strip())
+            return
 
-    def _src_format(self, view):
-        '''
-        use sublime.score_selector() to determine the current Pandoc format from
-        the current document syntax.
-        '''
-        max_label = None
-        max_score = 0
-        for label in self._setting('formats').iterkeys():
-            conf = self._format_conf(label)
-            # scope implies pandoc can accept the format as input
-            if 'scope' in conf and conf['scope'] != '':
-                score = view.score_selector(0, conf['scope'])
-                if score > max_score:
-                    max_score = score
-                    max_label = label
-        return self._format_conf(max_label)
+        # if write to file, open
+        if oformat is not None and oformat in _s('pandoc-format-file'):
+            try:
+                if sublime.platform() == 'osx':
+                    subprocess.call(["open", output_path])
+                elif sublime.platform() == 'windows':
+                    os.startfile(output_path)
+                elif os.name == 'posix':
+                    subprocess.call(('xdg-open', output_path))
+            except:
+                sublime.message_dialog('Wrote to file ' + output_path)
 
-    def _setting(self, key):
-        return sublime.load_settings('Pandoc.sublime-settings').get(key)
+        # write to buffer
+        if result:
+            if transformation['new-buffer']:
+                w = self.view.window()
+                w.new_file()
+                view = w.active_view()
+                region = sublime.Region(0, view.size())
+            else:
+                view = self.view
+            view.replace(edit, region, result.decode('utf8'))
+            view.set_syntax_file(transformation['syntax_file'])
 
-    def _format_conf(self, label):
-        '''
-        Generate a hash of format configuration.
-        @see Pandoc.sublime-settings
 
-        Keyword arguments:
-        label -- format label used in settings
-
-        Returns:
-        hash of any configured settings, plus "key" which is the pandoc format
-        (-f or -t values)
-        '''
-        key = self._setting('formats')[label]
-        conf = self._setting('format_' + key)
-        conf['key'] = key
-        return conf
-
-    def _find_binary(self, name):
-        path = self._setting(name + '-path')
-        if path is not None:
-            if os.path.exists(path):
-                return path
-            msg = 'configured path for {0} {1} not found.'.format(name, path)
-            sublime.error_message(msg)
-            return None
-
-        # Try the path first
-        for dirname in os.environ['PATH'].split(os.pathsep):
-            path = os.path.join(dirname, name)
-            if os.path.exists(path):
-                return path
-
-        dirnames = ['/usr/local/bin']
-
-        for dirname in dirnames:
-            path = os.path.join(dirname, name)
-            if os.path.exists(path):
-                return path
-
+def _find_binary(name, default=None):
+    if default is not None:
+        if os.path.exists(default):
+            return default
+        msg = 'configured path for {0} {1} not found.'.format(name, default)
+        sublime.error_message(msg)
         return None
+
+    # Try the path first
+    for dirname in os.environ['PATH'].split(os.pathsep):
+        path = os.path.join(dirname, name)
+        if os.path.exists(path):
+            return path
+
+    dirnames = ['/usr/local/bin']
+
+    for dirname in dirnames:
+        path = os.path.join(dirname, name)
+        if os.path.exists(path):
+            return path
+
+    return None
+
+def _s(key):
+    '''Convenience function for getting a setting.'''
+    return sublime.load_settings('Pandoc.sublime-settings').get(key)
+
+def _c(item):
+    '''Pretty prints item to console.'''
+    pprint.PrettyPrinter().pprint(item)
+    
+def get_arg_value(args, short=[], long=[]):
+    value = None
+    for arg in args:
+        if value:
+            return arg
+        match = re.search('^-(' + '|'.join(short) + ')$', arg)
+        if match:
+            value = True # grab the next arg
+            continue
+        match = re.search('^--(' + '|'.join(long) + ')=(.+)$', arg)
+        if match:
+            return match.group(2)
+    return None

@@ -1,170 +1,83 @@
 {
-  // Sets the path to the pandoc binary.
+  // path to the pandoc binary.
   "pandoc-path": null,
 
-  // Opens output in new buffer (instead of replacing input in same)
-  "new-buffer": 1,
+  // transformations
+  "transformations": {
 
-  // configure Pandoc executable
-  // see http://johnmacfarlane.net/pandoc/README.html#options
+    // label of transformation, to appear in sublime quick panel. This should
+    // be a name related to the format of the output.
+    "Markdown (Pandoc)": {
+      // Opens output in new buffer (instead of replacing input in same buffer)
+      "new-buffer": 1,
+      // maps sublime scope to input format. If the input matches against the 
+      // given scope, this transformation becomes available, and the input 
+      // format is used as the pandoc --from option.
+      // @see http://docs.sublimetext.info/en/latest/extensibility/syntaxdefs.html#scopes
+      // @see score_selector() http://www.sublimetext.com/docs/3/api_reference.html
+      // @see http://johnmacfarlane.net/pandoc/README.html#options
+      "scope": {
+        "text.html": "html",
+      },
+      // sublime syntax file of output format, will set output to this syntax
+      "syntax_file": "Packages/Markdown/Markdown.tmLanguage",
+      // additional arguments passed to pandoc
+      // -  --from is automatically set, see "scope" above
+      // -  --to=FORMAT or one of its aliases is required
+      // @see http://johnmacfarlane.net/pandoc/README.html#options
+      "pandoc-arguments": [
+        "--to=markdown",
+        "--no-wrap",
+        "--atx-headers",
+      ],
+    },
 
-  // enabled Pandoc formats
-  // key: label, value: Pandoc format key (-f or -t values)
-  "formats": {
-    "AsciiDoc": "asciidoc",
-    "LaTeX beamer slide show": "beamer",
-    "ConTeXt": "context",
-    "DocBook XML": "docbook",
-    "Word docx": "docx",
-    "HTML5 + javascript slide show": "dzslides",
-    "EPUB v2": "epub",
-    "EPUB v3": "epub3",
-    "FictionBook2 e-book": "fb2",
-    "Haddock": "haddock",
-    "XHTML 1": "html",
-    "HTML 5": "html5",
-    "JSON version of native AST": "json",
-    "LaTeX": "latex",
-    "Groff man": "man",
-    "Markdown": "markdown",
-    "Markdown (Github extended)": "markdown_github",
-    "Markdown (PHP Markdown Extra extended)": "markdown_phpextra",
-    "Markdown (Strict)": "markdown_strict",
-    "MediaWiki markup": "mediawiki",
-    "Native Haskell": "native",
-    "OpenOffice text document": "odt",
-    "OpenDocument XML": "opendocument",
-    "OPML": "opml",
-    "Emacs Org-Mode": "org",
-    "PDF": "pdf",
-    "reveal.js HTML5 + javascript slide show": "revealjs",
-    "Rich Text Format": "rtf",
-    "plain text": "plain",
-    "reStructuredText": "rst",
-    "S5 HTML and javascript slide show": "s5",
-    "Slideous HTML and javascript slide show": "slideous",
-    "Slidy HTML and javascript slide show": "slidy",
-    "GNU Texinfo": "texinfo",
-    "Textile": "textile"
+    "HTML 5": {
+      "new-buffer": 1,
+      "scope": {
+        "text.html.markdown": "markdown",
+      },
+      "syntax_file": "Packages/HTML/HTML.tmLanguage",
+      "pandoc-arguments": [
+        "--to=html5",
+        "--no-highlight",
+      ],
+    },
+
+    // note these are examples of output formats that should not be opened in a
+    // sublime text buffer. See "pandoc-format-file" below
+
+    // @see http://johnmacfarlane.net/pandoc/README.html#creating-a-pdf
+    "PDF": {
+      "scope": {
+        "text.html": "html",
+        "text.html.markdown": "markdown",
+      },
+      "pandoc-arguments": [
+        "-t", "pdf",
+        // if -o or --output missing, will write to a temporary file
+        // "-output=~/Downloads/output.pdf", 
+      ],
+    },
+    
+    "Microsoft Word": {
+      "scope": {
+        "text.html": "html",
+        "text.html.markdown": "markdown",
+      },
+      "pandoc-arguments": [
+        "-t", "docx",
+        // if -o or --output missing, will write to a temporary file
+        // "-output=~/Downloads/output.pdf", 
+      ],
+    },
+    
   },
 
-  // format configuration
-  // key: format_[key] where [key] is the Pandoc format key (-f or -t values)
-  // - scope: input sublime scope. Missing implies pandoc can not accept the
-  //   format as input (@todo fix this, allow multiple input formats per scope)
-  // - syntax_file: sublime syntax file of output format, will set output to
-  //   this syntax
-  // - from: list of pandoc options to add when used as input
-  // - to: list of pandoc options to add when used as output
-  "format_asciidoc": {},
-  "format_beamer": {
-    "syntax_file": "Packages/LaTeX/LaTeX Beamer.tmLanguage"
-  },
-  "format_context": {
-    "syntax_file": "Packages/LaTeX/LaTeX.tmLanguage"
-  },
-  "format_docbook": {
-    // "scope": "text.xml",
-    "syntax_file": "Packages/XML/XML.tmLanguage"
-  },
-  "format_docx": {},
-  "format_dzslides": {
-    "syntax_file": "Packages/HTML/HTML.tmLanguage"
-  },
-  "format_epub": {
-    "syntax_file": "Packages/XML/XML.tmLanguage"
-  },
-  "format_epub3": {
-    "syntax_file": "Packages/XML/XML.tmLanguage"
-  },
-  "format_fb2": {},
-  "format_haddock": {},
-  "format_html": {
-    "scope": "text.html",
-    "syntax_file": "Packages/HTML/HTML.tmLanguage"  },
-  "format_html5": {
-    "syntax_file": "Packages/HTML/HTML.tmLanguage"  },
-  "format_json": {
-    "scope": "source.json",
-    "syntax_file": "Packages/JavaScript/JSON.tmLanguage"
-  },
-  "format_latex": {
-    "scope": "text.tex.latex",
-    "syntax_file": "Packages/LaTeX/LaTeX.tmLanguage"
-  },
-  "format_man": {},
-  // pandoc by default uses an enhanced version of markdown, see
-  // http://johnmacfarlane.net/pandoc/README.html#pandocs-markdown
-  // to disable:
-  //    -   pandoc <1.10: add "--strict" to "to" or "from"
-  //    -   pandoc >=1.10: use markdown_strict output format
-  "format_markdown": {
-    "scope": "text.html.markdown",
-    "syntax_file": "Packages/Markdown/Markdown.tmLanguage",
-    "to": ["--no-wrap", "--atx-headers"],
-    "from": ["--no-highlight"]
-  },
-  "format_markdown_github": {
-    // "scope": "text.html.markdown",
-    "syntax_file": "Packages/Markdown/Markdown.tmLanguage"
-  },
-  "format_markdown_phpextra": {
-    // "scope": "text.html.markdown",
-    "syntax_file": "Packages/Markdown/Markdown.tmLanguage"
-  },
-  "format_markdown_strict": {
-    // "scope": "text.html.markdown",
-    "syntax_file": "Packages/Markdown/Markdown.tmLanguage"
-  },
-  "format_mediawiki": {
-    "scope": "text.html.mediawiki",
-    "syntax_file": "Packages/Mediawiker/Mediawiki.tmLanguage"
-  },
-  "format_native": {
-    "scope": "source.haskell",
-    "syntax_file": "Packages/Haskell/Haskell.tmLanguage"
-  },
-  "format_odt": {},
-  "format_opendocument": {
-    "syntax_file": "Packages/XML/XML.tmLanguage"
-  },
-  "format_pdf": {
-    // use --latex-engine=engine where engine is one of pdflatex|lualatex|xelatex
-    // This may need to be specified with a full path (e.g. on a mac with
-    // BasicTeX "/usr/texbin/pdflatex").
-    "to": ["--latex-engine=/usr/texbin/pdflatex"]
-  },
-  "format_rtf": {},
-  "format_opml": {
-    // "scope": "text.xml",
-    "syntax_file": "Packages/XML/XML.tmLanguage"
-  },
-  "format_org": {},
-  "format_plain": {
-    "syntax_file": "Packages/Text/Plain text.tmLanguage"
-  },
-  "format_revealjs": {
-    "syntax_file": "Packages/HTML/HTML.tmLanguage"
-  },
-  "format_rst": {
-    "scope": "text.restructuredtext",
-    "syntax_file": "Packages/RestructuredText/reStructuredText.tmLanguage"
-  },
-  "format_s5": {
-    "syntax_file": "Packages/HTML/HTML.tmLanguage"
-  },
-  "format_slideous": {
-    "syntax_file": "Packages/HTML/HTML.tmLanguage"
-  },
-  "format_slidy": {
-    "syntax_file": "Packages/HTML/HTML.tmLanguage"
-  },
-  "format_texinfo": {
-    "syntax_file": "Packages/LaTeX/LaTeX Beamer.tmLanguage"
-  },
-  "format_textile": {
-    "scope": "text.html.textile",
-    "syntax_file": "Packages/Textile/Textile.tmLanguage"
-  }
+  // these should not need to be customized
+
+  // output formats that are written to file, using -o parameter. These we do
+  // not output to a sublime text buffer.
+  "pandoc-format-file": ["docx", "epub", "pdf", "odt"]
 
 }
