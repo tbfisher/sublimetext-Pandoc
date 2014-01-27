@@ -4,7 +4,18 @@
     {
       "name": "Pandoc",
       "details": "https://github.com/tbfisher/sublimetext-Pandoc",
-      "labels": ["text manipulation", "markdown", "reStructuredText", "pandoc", "markup", "LaTeX"],
+      "labels": [
+        "latex",
+        "github flavored markdown",
+        "github markdown",
+        "html",
+        "markdown", 
+        "markup", 
+        "pandoc", 
+        "reStructuredText", 
+        "text manipulation",
+        "textile"
+      ],
       "releases": [
         {
           "sublime_text": "<3000",
