@@ -97,25 +97,20 @@ class PandocCommand(sublime_plugin.TextCommand):
         # if write to file, add -o if necessary, set file path to output_path
         oformat = get_arg_value(transformation['pandoc-arguments'], 
             short=['t', 'w'], long=['to', 'write'])
-        _c(oformat)
         if oformat is not None and oformat in _s('pandoc-format-file'):
             output_path = get_arg_value(transformation['pandoc-arguments'], 
                 short=['o'], long=['output'])
             if output_path is None:
                 # note the file extension matches the pandoc format name
                 output_path = tempfile.NamedTemporaryFile().name
-                _c(output_path)
                 output_path += "." + oformat
-                _c(output_path)
                 cmd.extend(['-o', output_path])
-            _c(output_path)
 
         # run pandoc
         process = subprocess.Popen(
             cmd, shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
             stderr=subprocess.PIPE)
         result, error = process.communicate(contents.encode('utf-8'))
-        _c(cmd)
 
         if error:
             sublime.error_message(error.decode('utf-8').strip())
