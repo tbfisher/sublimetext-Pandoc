@@ -16,7 +16,7 @@ You need to [install Pandoc](http://johnmacfarlane.net/pandoc/installing.html), 
 
 	* OS X:
 
-	        ~/Library/Application Support/Sublime Text 2/Packages/
+	        ~/Library/Application Support/Sublime Text 3/Packages/
 
 	* Linux:
 
@@ -34,6 +34,6 @@ Run Pandoc on the current document via the Command Palette (`Command+Shift+P` on
 
 ## Configure
 
-You can fully configure the available formats, and configure the Pandoc options to customize transformation, via the [plugin settings file](http://docs.sublimetext.info/en/latest/customization/settings.html) Via the application menu, go to "Preferences" -> "Package Settings" -> "Pandoc".
+You can fully configure the available formats, and configure the Pandoc options to customize transformation, via the [plugin settings file](http://docs.sublimetext.info/en/latest/customization/settings.html). Via the application menu, go to "Preferences" -> "Package Settings" -> "Pandoc".
 
 
