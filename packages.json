@@ -9,10 +9,10 @@
         "github flavored markdown",
         "github markdown",
         "html",
-        "markdown", 
-        "markup", 
-        "pandoc", 
-        "reStructuredText", 
+        "markdown",
+        "markup",
+        "pandoc",
+        "reStructuredText",
         "text manipulation",
         "textile"
       ],
@@ -29,4 +29,3 @@
     }
   ]
 }
-// https://raw.github.com/wbond/sublime_package_control/master/example-repository.json
