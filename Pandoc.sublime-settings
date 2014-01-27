@@ -1,5 +1,5 @@
 {
-  // path to the pandoc binary.
+  // path to the pandoc binary, e.g. "/usr/local/bin/pandoc"
   "pandoc-path": null,
 
   // transformations
