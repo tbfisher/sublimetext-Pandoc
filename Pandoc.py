@@ -58,6 +58,7 @@ class PromptPandocCommand(sublime_plugin.WindowCommand):
             sublime.error_message(
                 'No transformations configured for the syntax '
                 + view.settings().get('syntax'))
+            return
 
         # reverse sort
         self.options = list(OrderedDict(sorted(ranked.items(), 
@@ -80,7 +81,10 @@ class PandocCommand(sublime_plugin.TextCommand):
         region = sublime.Region(0, self.view.size())
         contents = self.view.substr(region)
 
-        cmd = [_find_binary('pandoc', _s('pandoc-path'))]
+        pandoc = _find_binary('pandoc', _s('pandoc-path'))
+        if pandoc is None:
+            return
+        cmd = [pandoc]
 
         # from format
         score = 0
@@ -149,19 +153,13 @@ def _find_binary(name, default=None):
         sublime.error_message(msg)
         return None
 
-    # Try the path first
     for dirname in os.environ['PATH'].split(os.pathsep):
+        _c(dirname)
         path = os.path.join(dirname, name)
         if os.path.exists(path):
             return path
 
-    dirnames = ['/usr/local/bin']
-
-    for dirname in dirnames:
-        path = os.path.join(dirname, name)
-        if os.path.exists(path):
-            return path
-
+    sublime.error_message('Could not find pandoc executable on PATH.')
     return None
 
 def _s(key):
