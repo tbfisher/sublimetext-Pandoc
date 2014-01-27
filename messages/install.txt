@@ -1,0 +1,9 @@
+You will need a Pandoc executable for this module to work.
+
+http://johnmacfarlane.net/pandoc/installing.html
+
+You can configure the path to pandoc using the setting key `pandoc-path`.
+
+Visit the project page for more info, report bugs, etc.
+
+https://github.com/tbfisher/sublimetext-Pandoc

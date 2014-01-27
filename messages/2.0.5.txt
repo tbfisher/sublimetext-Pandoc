@@ -1,0 +1,3 @@
+The settings format has changed. You will need to update any user settings you have created.
+
+There are now 2 top level settings keys, "user" and "default". If you use "default" in your user settings file, the default settings will be overwritten, if you use "user" your settings will be merged into the default settings.
