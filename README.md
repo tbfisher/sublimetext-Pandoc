@@ -20,11 +20,11 @@ You need to [install Pandoc](http://johnmacfarlane.net/pandoc/installing.html), 
 
 	* Linux:
 
-	        ~/.config/sublime-text-2/Packages/
+	        ~/.config/sublime-text-3/Packages/
 
 	* Windows:
 
-	        %APPDATA%/Sublime Text 2/Packages/
+	        %APPDATA%/Sublime Text 3/Packages/
 
 ## Usage
 
