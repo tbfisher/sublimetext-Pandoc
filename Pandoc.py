@@ -61,7 +61,7 @@ class PromptPandocCommand(sublime_plugin.WindowCommand):
             return
 
         # reverse sort
-        self.options = list(OrderedDict(sorted(ranked.items(), 
+        self.options = list(OrderedDict(sorted(ranked.items(),
             key=lambda t: t[1])).keys())
         self.options.reverse()
 
@@ -99,10 +99,10 @@ class PandocCommand(sublime_plugin.TextCommand):
         cmd.extend(transformation['pandoc-arguments'])
 
         # if write to file, add -o if necessary, set file path to output_path
-        oformat = get_arg_value(transformation['pandoc-arguments'], 
+        oformat = get_arg_value(transformation['pandoc-arguments'],
             short=['t', 'w'], long=['to', 'write'])
         if oformat is not None and oformat in _s('pandoc-format-file'):
-            output_path = get_arg_value(transformation['pandoc-arguments'], 
+            output_path = get_arg_value(transformation['pandoc-arguments'],
                 short=['o'], long=['output'])
             if output_path is None:
                 # note the file extension matches the pandoc format name
@@ -144,7 +144,6 @@ class PandocCommand(sublime_plugin.TextCommand):
             view.replace(edit, region, result.decode('utf8'))
             view.set_syntax_file(transformation['syntax_file'])
 
-
 def _find_binary(name, default=None):
     if default is not None:
         if os.path.exists(default):
@@ -154,7 +153,6 @@ def _find_binary(name, default=None):
         return None
 
     for dirname in os.environ['PATH'].split(os.pathsep):
-        _c(dirname)
         path = os.path.join(dirname, name)
         if os.path.exists(path):
             return path
@@ -169,7 +167,7 @@ def _s(key):
 def _c(item):
     '''Pretty prints item to console.'''
     pprint.PrettyPrinter().pprint(item)
-    
+
 def get_arg_value(args, short=[], long=[]):
     value = None
     for arg in args:
