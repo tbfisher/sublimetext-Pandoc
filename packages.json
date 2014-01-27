@@ -7,10 +7,15 @@
       "labels": ["text manipulation", "markdown", "reStructuredText", "pandoc", "markup", "LaTeX"],
       "releases": [
         {
-          "sublime_text": "*",
-          "details": "https://github.com/tbfisher/sublimetext-Pandoc/releases"
+          "sublime_text": "<3000",
+          "details": "https://github.com/tbfisher/sublimetext-Pandoc/tree/1.x"
+        }
+        {
+          "sublime_text": ">=3000",
+          "details": "https://github.com/tbfisher/sublimetext-Pandoc/tree/master"
         }
       ]
     }
   ]
 }
+// https://raw.github.com/wbond/sublime_package_control/master/example-repository.json
