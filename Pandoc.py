@@ -161,8 +161,33 @@ def _find_binary(name, default=None):
     return None
 
 def _s(key):
-    '''Convenience function for getting a setting.'''
-    return sublime.load_settings('Pandoc.sublime-settings').get(key)
+    '''Convenience function for getting the setting dict.'''
+    return merge_user_settings()[key]
+
+def merge_user_settings():
+    '''Return the default settings merged with the user's settings.'''
+
+    settings = sublime.load_settings('Pandoc.sublime-settings')
+    default = settings.get('default', {})
+    user = settings.get('user', {})
+
+    if user:
+
+        # merge each transformation
+        transformations = default.pop('transformations', {})
+        user_transformations = user.get('transformations', {})
+        for name, data in user_transformations.items():
+            if name in transformations:
+                transformations[name].update(data)
+            else:
+                transformations[name] = data
+        default['transformations'] = transformations
+        user.pop('transformations', None)
+
+        # merge all other keys
+        default.update(user)
+
+    return default
 
 def _c(item):
     '''Pretty prints item to console.'''

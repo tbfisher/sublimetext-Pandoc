@@ -1,83 +1,88 @@
 {
-  // path to the pandoc binary, e.g. "/usr/local/bin/pandoc"
-  "pandoc-path": null,
 
-  // transformations
-  "transformations": {
+  "default": {
 
-    // label of transformation, to appear in sublime quick panel. This should
-    // be a name related to the format of the output.
-    "Markdown (Pandoc)": {
-      // Opens output in new buffer (instead of replacing input in same buffer)
-      "new-buffer": 1,
-      // maps sublime scope to input format. If the input matches against the 
-      // given scope, this transformation becomes available, and the input 
-      // format is used as the pandoc --from option.
-      // @see http://docs.sublimetext.info/en/latest/extensibility/syntaxdefs.html#scopes
-      // @see score_selector() http://www.sublimetext.com/docs/3/api_reference.html
-      // @see http://johnmacfarlane.net/pandoc/README.html#options
-      "scope": {
-        "text.html": "html",
+    // path to the pandoc binary, e.g. "/usr/local/bin/pandoc"
+    "pandoc-path": null,
+
+    // transformations
+    "transformations": {
+
+      // label of transformation, to appear in sublime quick panel. This should
+      // be a name related to the format of the output.
+      "Markdown (Pandoc)": {
+        // Opens output in new buffer (instead of replacing input in same buffer)
+        "new-buffer": 1,
+        // maps sublime scope to input format. If the input matches against the
+        // given scope, this transformation becomes available, and the input
+        // format is used as the pandoc --from option.
+        // @see http://docs.sublimetext.info/en/latest/extensibility/syntaxdefs.html#scopes
+        // @see score_selector() http://www.sublimetext.com/docs/3/api_reference.html
+        // @see http://johnmacfarlane.net/pandoc/README.html#options
+        "scope": {
+          "text.html": "html",
+        },
+        // sublime syntax file of output format, will set output to this syntax
+        "syntax_file": "Packages/Markdown/Markdown.tmLanguage",
+        // additional arguments passed to pandoc
+        // -  --from is automatically set, see "scope" above
+        // -  --to=FORMAT or one of its aliases is required
+        // @see http://johnmacfarlane.net/pandoc/README.html#options
+        "pandoc-arguments": [
+          "--to=markdown",
+          "--no-wrap",
+          "--atx-headers",
+        ],
       },
-      // sublime syntax file of output format, will set output to this syntax
-      "syntax_file": "Packages/Markdown/Markdown.tmLanguage",
-      // additional arguments passed to pandoc
-      // -  --from is automatically set, see "scope" above
-      // -  --to=FORMAT or one of its aliases is required
-      // @see http://johnmacfarlane.net/pandoc/README.html#options
-      "pandoc-arguments": [
-        "--to=markdown",
-        "--no-wrap",
-        "--atx-headers",
-      ],
+
+      "HTML 5": {
+        "new-buffer": 1,
+        "scope": {
+          "text.html.markdown": "markdown",
+        },
+        "syntax_file": "Packages/HTML/HTML.tmLanguage",
+        "pandoc-arguments": [
+          "--to=html5",
+          "--no-highlight",
+        ],
+      },
+
+      // note these are examples of output formats that should not be opened in a
+      // sublime text buffer. See "pandoc-format-file" below
+
+      // @see http://johnmacfarlane.net/pandoc/README.html#creating-a-pdf
+      "PDF": {
+        "scope": {
+          "text.html": "html",
+          "text.html.markdown": "markdown",
+        },
+        "pandoc-arguments": [
+          "-t", "pdf",
+          // if -o or --output missing, will write to a temporary file
+          // "-output=~/Downloads/output.pdf",
+        ],
+      },
+
+      "Microsoft Word": {
+        "scope": {
+          "text.html": "html",
+          "text.html.markdown": "markdown",
+        },
+        "pandoc-arguments": [
+          "-t", "docx",
+          // if -o or --output missing, will write to a temporary file
+          // "-output=~/Downloads/output.pdf",
+        ],
+      },
+
     },
 
-    "HTML 5": {
-      "new-buffer": 1,
-      "scope": {
-        "text.html.markdown": "markdown",
-      },
-      "syntax_file": "Packages/HTML/HTML.tmLanguage",
-      "pandoc-arguments": [
-        "--to=html5",
-        "--no-highlight",
-      ],
-    },
+    // these should not need to be customized
 
-    // note these are examples of output formats that should not be opened in a
-    // sublime text buffer. See "pandoc-format-file" below
+    // output formats that are written to file, using -o parameter. These we do
+    // not output to a sublime text buffer.
+    "pandoc-format-file": ["docx", "epub", "pdf", "odt"],
 
-    // @see http://johnmacfarlane.net/pandoc/README.html#creating-a-pdf
-    "PDF": {
-      "scope": {
-        "text.html": "html",
-        "text.html.markdown": "markdown",
-      },
-      "pandoc-arguments": [
-        "-t", "pdf",
-        // if -o or --output missing, will write to a temporary file
-        // "-output=~/Downloads/output.pdf", 
-      ],
-    },
-    
-    "Microsoft Word": {
-      "scope": {
-        "text.html": "html",
-        "text.html.markdown": "markdown",
-      },
-      "pandoc-arguments": [
-        "-t", "docx",
-        // if -o or --output missing, will write to a temporary file
-        // "-output=~/Downloads/output.pdf", 
-      ],
-    },
-    
   },
-
-  // these should not need to be customized
-
-  // output formats that are written to file, using -o parameter. These we do
-  // not output to a sublime text buffer.
-  "pandoc-format-file": ["docx", "epub", "pdf", "odt"]
 
 }
