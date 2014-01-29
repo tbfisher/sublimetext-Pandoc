@@ -62,6 +62,10 @@
         },
         "pandoc-arguments": [
           "-t", "pdf"
+          // use --latex-engine=engine where engine is
+          // pdflatex|lualatex|xelatex. This may need to be specified with a
+          // full path, e.g. on a mac with BasicTeX
+          // "--latex-engine=/usr/texbin/pdflatex"
           // if -o or --output missing, will write to a temporary file
           // "-output=~/Downloads/output.pdf"
         ]

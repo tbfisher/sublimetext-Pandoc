@@ -100,22 +100,27 @@ class PandocCommand(sublime_plugin.TextCommand):
         cmd.extend(['-f', iformat])
 
         # configured parameters
-        cmd.extend(transformation['pandoc-arguments'])
+        args = Args(transformation['pandoc-arguments'])
+
+        # output format
+        oformat = args.get(short=['t', 'w'], long=['to', 'write'])
+
+        # pandoc doesn't actually take 'pdf' as an output format
+        # see https://github.com/jgm/pandoc/issues/571
+        if oformat == 'pdf':
+            args = args.remove(
+                short=['t', 'w'], long=['to', 'write'], values=['pdf'])
 
         # if write to file, add -o if necessary, set file path to output_path
-        oformat = get_arg_value(
-            transformation['pandoc-arguments'],
-            short=['t', 'w'], long=['to', 'write'])
         if oformat is not None and oformat in _s('pandoc-format-file'):
-            output_path = get_arg_value(
-                transformation['pandoc-arguments'],
-                short=['o'], long=['output'])
+            output_path = args.get(short=['o'], long=['output'])
             if output_path is None:
                 # note the file extension matches the pandoc format name
                 output_path = tempfile.NamedTemporaryFile().name
                 output_path += "." + oformat
-                cmd.extend(['-o', output_path])
-            # special handling of pdf
+                args.extend(['-o', output_path])
+
+        cmd.extend(args)
 
         # run pandoc
         process = subprocess.Popen(
@@ -210,16 +215,47 @@ def _c(item):
     pprint.PrettyPrinter().pprint(item)
 
 
-def get_arg_value(args, short=[], long=[]):
-    value = None
-    for arg in args:
-        if value:
-            return arg
-        match = re.search('^-(' + '|'.join(short) + ')$', arg)
-        if match:
-            value = True  # grab the next arg
-            continue
-        match = re.search('^--(' + '|'.join(long) + ')=(.+)$', arg)
-        if match:
-            return match.group(2)
-    return None
+class Args(list):
+    '''Process Pandoc arguments.
+
+    "short" are of the form "-k val""".
+    "long" arguments are of the form "--key=val""".'''
+
+    def get(self, short=None, long=None):
+        '''Get the first value for a argument.'''
+        value = None
+        for arg in self:
+            if short is not None:
+                if value:
+                    return arg
+                match = re.search('^-(' + '|'.join(short) + ')$', arg)
+                if match:
+                    value = True  # grab the next arg
+                    continue
+            if long is not None:
+                match = re.search('^--(' + '|'.join(long) + ')=(.+)$', arg)
+                if match:
+                    return match.group(2)
+        return None
+
+    def remove(self, short=None, long=None, values=None):
+        '''Remove all matching arguments.'''
+        ret = Args([])
+        value = None
+        for arg in self:
+            if short is not None:
+                if value:
+                    if values is not None and arg not in values:
+                        ret.append(arg)
+                    value = None
+                    continue
+                match = re.search('^-(' + '|'.join(short) + ')$', arg)
+                if match:
+                    value = True  # grab the next arg
+                    continue
+            if long is not None:
+                match = re.search('^--(' + '|'.join(long) + ')=(.+)$', arg)
+                if match:
+                    continue
+            ret.append(arg)
+        return ret
