@@ -20,7 +20,7 @@
         // @see score_selector() http://www.sublimetext.com/docs/3/api_reference.html
         // @see http://johnmacfarlane.net/pandoc/README.html#options
         "scope": {
-          "text.html": "html",
+          "text.html": "html"
         },
         // sublime syntax file of output format, will set output to this syntax
         "syntax_file": "Packages/Markdown/Markdown.tmLanguage",
@@ -31,20 +31,20 @@
         "pandoc-arguments": [
           "--to=markdown",
           "--no-wrap",
-          "--atx-headers",
-        ],
+          "--atx-headers"
+        ]
       },
 
       "HTML 5": {
         "new-buffer": 1,
         "scope": {
-          "text.html.markdown": "markdown",
+          "text.html.markdown": "markdown"
         },
         "syntax_file": "Packages/HTML/HTML.tmLanguage",
         "pandoc-arguments": [
           "--to=html5",
-          "--no-highlight",
-        ],
+          "--no-highlight"
+        ]
       },
 
       // note these are examples of output formats that should not be opened in a
@@ -54,26 +54,26 @@
       "PDF": {
         "scope": {
           "text.html": "html",
-          "text.html.markdown": "markdown",
+          "text.html.markdown": "markdown"
         },
         "pandoc-arguments": [
-          "-t", "pdf",
+          "-t", "pdf"
           // if -o or --output missing, will write to a temporary file
-          // "-output=~/Downloads/output.pdf",
-        ],
+          // "-output=~/Downloads/output.pdf"
+        ]
       },
 
       "Microsoft Word": {
         "scope": {
           "text.html": "html",
-          "text.html.markdown": "markdown",
+          "text.html.markdown": "markdown"
         },
         "pandoc-arguments": [
-          "-t", "docx",
+          "-t", "docx"
           // if -o or --output missing, will write to a temporary file
-          // "-output=~/Downloads/output.pdf",
-        ],
-      },
+          // "-output=~/Downloads/output.pdf"
+        ]
+      }
 
     },
 
@@ -81,8 +81,8 @@
 
     // output formats that are written to file, using -o parameter. These we do
     // not output to a sublime text buffer.
-    "pandoc-format-file": ["docx", "epub", "pdf", "odt"],
+    "pandoc-format-file": ["docx", "epub", "pdf", "odt"]
 
-  },
+  }
 
 }
