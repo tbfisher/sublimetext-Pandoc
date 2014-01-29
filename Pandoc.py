@@ -80,10 +80,12 @@ class PromptPandocCommand(sublime_plugin.WindowCommand):
 class PandocCommand(sublime_plugin.TextCommand):
 
     def run(self, edit, transformation):
+
         # string to work with
         region = sublime.Region(0, self.view.size())
         contents = self.view.substr(region)
 
+        # pandoc executable
         pandoc = _find_binary('pandoc', _s('pandoc-path'))
         if pandoc is None:
             return
@@ -128,14 +130,16 @@ class PandocCommand(sublime_plugin.TextCommand):
             stderr=subprocess.PIPE)
         result, error = process.communicate(contents.encode('utf-8'))
 
+        # handle pandoc errors
         if error:
             sublime.error_message('\n\n'.join([
                 'Error when running:',
                 ' '.join(cmd),
                 error.decode('utf-8').strip()]))
             return
-        else:
-            print(' '.join(cmd))
+
+        # write pandoc command to console
+        print(' '.join(cmd))
 
         # if write to file, open
         if oformat is not None and oformat in _s('pandoc-format-file'):
@@ -148,6 +152,7 @@ class PandocCommand(sublime_plugin.TextCommand):
                     subprocess.call(('xdg-open', output_path))
             except:
                 sublime.message_dialog('Wrote to file ' + output_path)
+            return
 
         # write to buffer
         if result:
