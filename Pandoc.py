@@ -117,8 +117,11 @@ class PandocCommand(sublime_plugin.TextCommand):
         result, error = process.communicate(contents.encode('utf-8'))
 
         if error:
-            sublime.error_message(error.decode('utf-8').strip())
+            sublime.error_message('\n\n'.join(['Error when running:',
+                ' '.join(cmd), error.decode('utf-8').strip()]))
             return
+        else:
+            print(' '.join(cmd))
 
         # if write to file, open
         if oformat is not None and oformat in _s('pandoc-format-file'):
