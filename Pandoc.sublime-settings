@@ -2,7 +2,11 @@
 
   "default": {
 
-    // path to the pandoc binary, e.g. "/usr/local/bin/pandoc"
+    // path to the pandoc binary. Default locations per platform:
+    // -  mac
+    //    "pandoc-path": "/usr/local/bin/pandoc",
+    // -  windows
+    //    "pandoc-path": "C:/Users/[username]/AppData/Local/Pandoc/pandoc.exe",
     "pandoc-path": null,
 
     // transformations
