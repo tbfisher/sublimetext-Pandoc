@@ -21,7 +21,8 @@
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 # OTHER DEALINGS IN THE SOFTWARE.
 
-import sublime, sublime_plugin
+import sublime
+import sublime_plugin
 from collections import OrderedDict
 import pprint
 import re
@@ -29,9 +30,6 @@ import subprocess
 import tempfile
 import os
 
-# class ExampleCommand(sublime_plugin.TextCommand):
-#     def run(self, edit):
-#         self.view.insert(edit, 0, "Hello, World!")
 
 class PromptPandocCommand(sublime_plugin.WindowCommand):
 
@@ -39,7 +37,9 @@ class PromptPandocCommand(sublime_plugin.WindowCommand):
 
     def run(self):
         if self.window.active_view():
-            self.window.show_quick_panel(self.transformations(), self.transform)
+            self.window.show_quick_panel(
+                self.transformations(),
+                self.transform)
 
     def transformations(self):
         '''Generates a ranked list of available transformations.'''
@@ -50,7 +50,8 @@ class PromptPandocCommand(sublime_plugin.WindowCommand):
         for label, settings in _s('transformations').items():
             for scope in settings['scope'].keys():
                 score = view.score_selector(0, scope)
-                if not score: continue
+                if not score:
+                    continue
                 if label not in ranked or ranked[label] < score:
                     ranked[label] = score
 
@@ -61,18 +62,20 @@ class PromptPandocCommand(sublime_plugin.WindowCommand):
             return
 
         # reverse sort
-        self.options = list(OrderedDict(sorted(ranked.items(),
-            key=lambda t: t[1])).keys())
+        self.options = list(OrderedDict(sorted(
+            ranked.items(), key=lambda t: t[1])).keys())
         self.options.reverse()
 
         return self.options
 
     def transform(self, i):
-        if i == -1: return
+        if i == -1:
+            return
         transformation = _s('transformations')[self.options[i]]
         self.window.active_view().run_command('pandoc', {
             'transformation': transformation
         })
+
 
 class PandocCommand(sublime_plugin.TextCommand):
 
@@ -90,7 +93,8 @@ class PandocCommand(sublime_plugin.TextCommand):
         score = 0
         for scope, c_iformat in transformation['scope'].items():
             c_score = self.view.score_selector(0, scope)
-            if c_score <= score: continue
+            if c_score <= score:
+                continue
             score = c_score
             iformat = c_iformat
         cmd.extend(['-f', iformat])
@@ -99,16 +103,19 @@ class PandocCommand(sublime_plugin.TextCommand):
         cmd.extend(transformation['pandoc-arguments'])
 
         # if write to file, add -o if necessary, set file path to output_path
-        oformat = get_arg_value(transformation['pandoc-arguments'],
+        oformat = get_arg_value(
+            transformation['pandoc-arguments'],
             short=['t', 'w'], long=['to', 'write'])
         if oformat is not None and oformat in _s('pandoc-format-file'):
-            output_path = get_arg_value(transformation['pandoc-arguments'],
+            output_path = get_arg_value(
+                transformation['pandoc-arguments'],
                 short=['o'], long=['output'])
             if output_path is None:
                 # note the file extension matches the pandoc format name
                 output_path = tempfile.NamedTemporaryFile().name
                 output_path += "." + oformat
                 cmd.extend(['-o', output_path])
+            # special handling of pdf
 
         # run pandoc
         process = subprocess.Popen(
@@ -117,8 +124,10 @@ class PandocCommand(sublime_plugin.TextCommand):
         result, error = process.communicate(contents.encode('utf-8'))
 
         if error:
-            sublime.error_message('\n\n'.join(['Error when running:',
-                ' '.join(cmd), error.decode('utf-8').strip()]))
+            sublime.error_message('\n\n'.join([
+                'Error when running:',
+                ' '.join(cmd),
+                error.decode('utf-8').strip()]))
             return
         else:
             print(' '.join(cmd))
@@ -147,6 +156,7 @@ class PandocCommand(sublime_plugin.TextCommand):
             view.replace(edit, region, result.decode('utf8'))
             view.set_syntax_file(transformation['syntax_file'])
 
+
 def _find_binary(name, default=None):
     if default is not None:
         if os.path.exists(default):
@@ -163,9 +173,11 @@ def _find_binary(name, default=None):
     sublime.error_message('Could not find pandoc executable on PATH.')
     return None
 
+
 def _s(key):
     '''Convenience function for getting the setting dict.'''
     return merge_user_settings()[key]
+
 
 def merge_user_settings():
     '''Return the default settings merged with the user's settings.'''
@@ -192,9 +204,11 @@ def merge_user_settings():
 
     return default
 
+
 def _c(item):
     '''Pretty prints item to console.'''
     pprint.PrettyPrinter().pprint(item)
+
 
 def get_arg_value(args, short=[], long=[]):
     value = None
@@ -203,7 +217,7 @@ def get_arg_value(args, short=[], long=[]):
             return arg
         match = re.search('^-(' + '|'.join(short) + ')$', arg)
         if match:
-            value = True # grab the next arg
+            value = True  # grab the next arg
             continue
         match = re.search('^--(' + '|'.join(long) + ')=(.+)$', arg)
         if match:
