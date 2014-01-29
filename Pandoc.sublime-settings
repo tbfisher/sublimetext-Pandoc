@@ -67,7 +67,7 @@
           // full path, e.g. on a mac with BasicTeX
           // "--latex-engine=/usr/texbin/pdflatex"
           // if -o or --output missing, will write to a temporary file
-          // "-output=~/Downloads/output.pdf"
+          // "--output=~/Downloads/output.pdf"
         ]
       },
 
@@ -79,7 +79,7 @@
         "pandoc-arguments": [
           "-t", "docx"
           // if -o or --output missing, will write to a temporary file
-          // "-output=~/Downloads/output.pdf"
+          // "--output=~/Downloads/output.pdf"
         ]
       }
 
