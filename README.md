@@ -6,25 +6,10 @@ A [Sublime Text](http://www.sublimetext.com/) plugin that uses [Pandoc](http://j
 
 You need to [install Pandoc](http://johnmacfarlane.net/pandoc/installing.html), and this module:
 
--	[With the Package Control plugin](https://sublime.wbond.net/installation).
--	With Git: Clone the repository in your Sublime Text "Packages" directory:
+-	[Using the Package Control plugin](https://sublime.wbond.net/installation).
+-	Manually, either download or checkout this repository and [install into your packages directory](http://docs.sublimetext.info/en/latest/extensibility/packages.html#package-installation)
 
-    	git clone https://github.com/tbfisher/sublimetext-Pandoc.git
-
-
-	The "Packages" directory is located at:
-
-	* OS X:
-
-	        ~/Library/Application Support/Sublime Text 3/Packages/
-
-	* Linux:
-
-	        ~/.config/sublime-text-3/Packages/
-
-	* Windows:
-
-	        %APPDATA%/Sublime Text 3/Packages/
+For Sublime Text 2, use the 1.x branch.
 
 ## Usage
 
@@ -35,5 +20,3 @@ Run Pandoc on the current document via the Command Palette (`Command+Shift+P` on
 ## Configure
 
 You can fully configure the available formats, and configure the Pandoc options to customize transformation, via the [plugin settings file](http://docs.sublimetext.info/en/latest/customization/settings.html). Via the application menu, go to "Preferences" -> "Package Settings" -> "Pandoc".
-
-
