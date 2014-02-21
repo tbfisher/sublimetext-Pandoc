@@ -126,6 +126,7 @@
           "text.html": "html",
           "text.html.markdown": "markdown",
         },
+        // Use the "out-ext" parameter to define a custom output file extension. Commonly used for pdf.
         "out-ext": "pdf",
         "pandoc-arguments": [
           "-t", "beamer",
