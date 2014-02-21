@@ -60,7 +60,6 @@
           "text.html": "html",
           "text.html.markdown": "markdown"
         },
-        "out-ext": "pdf",
         "pandoc-arguments": [
           "-t", "pdf"
           // use --latex-engine=engine where engine is

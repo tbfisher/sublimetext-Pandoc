@@ -103,7 +103,13 @@ class PandocCommand(sublime_plugin.TextCommand):
 
         # configured parameters
         args = Args(transformation['pandoc-arguments'])
-        argsext = transformation['out-ext']
+        # Use pandoc output format name as file extension unless specified by out-ext in transformation
+        try:
+            transformation['out-ext']
+        except:
+            argsext = None
+        else:
+            argsext = transformation['out-ext']
         # output format
         oformat = args.get(short=['t', 'w'], long=['to', 'write'])
         oext = argsext
