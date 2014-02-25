@@ -33,6 +33,10 @@ import os
 
 class PromptPandocCommand(sublime_plugin.WindowCommand):
 
+    '''Defines the plugin command palette item.
+
+    @see Default.sublime-commands'''
+
     options = []
 
     def run(self):
@@ -78,6 +82,8 @@ class PromptPandocCommand(sublime_plugin.WindowCommand):
 
 
 class PandocCommand(sublime_plugin.TextCommand):
+
+    '''Transforms using Pandoc.'''
 
     def run(self, edit, transformation):
 
@@ -168,6 +174,9 @@ class PandocCommand(sublime_plugin.TextCommand):
 
 
 def _find_binary(name, default=None):
+    '''Returns a configure path or looks for an executable on the system path.
+    '''
+
     if default is not None:
         if os.path.exists(default):
             return default
