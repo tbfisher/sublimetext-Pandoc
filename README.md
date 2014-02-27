@@ -20,3 +20,5 @@ Run Pandoc on the current document via the Command Palette (`Command+Shift+P` on
 ## Configure
 
 You can fully configure the available formats, and configure the Pandoc options to customize transformation, via the [plugin settings file](http://docs.sublimetext.info/en/latest/customization/settings.html). Via the application menu, go to "Preferences" -> "Package Settings" -> "Pandoc".
+
+There are 2 possible top level settings keys, "user" and "default". If you use "default" in your user settings file, the default settings will be overwritten, but if you use "user" your settings will be merged into the default settings.
