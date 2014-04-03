@@ -92,7 +92,8 @@ class PandocCommand(sublime_plugin.TextCommand):
         contents = self.view.substr(region)
 
         # pandoc executable
-        pandoc = _find_binary('pandoc', _s('pandoc-path'))
+        binary_name = 'pandoc.exe' if sublime.platform() == 'windows' else 'pandoc'
+        pandoc = _find_binary(binary_name, _s('pandoc-path'))
         if pandoc is None:
             return
         cmd = [pandoc]
