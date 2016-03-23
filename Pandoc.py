@@ -110,9 +110,16 @@ class PandocCommand(sublime_plugin.TextCommand):
 
         # configured parameters
         args = Args(transformation['pandoc-arguments'])
-
+        # Use pandoc output format name as file extension unless specified by out-ext in transformation
+        try:
+            transformation['out-ext']
+        except:
+            argsext = None
+        else:
+            argsext = transformation['out-ext']
         # output format
         oformat = args.get(short=['t', 'w'], long=['to', 'write'])
+        oext = argsext
 
         # pandoc doesn't actually take 'pdf' as an output format
         # see https://github.com/jgm/pandoc/issues/571
@@ -126,7 +133,11 @@ class PandocCommand(sublime_plugin.TextCommand):
             if output_path is None:
                 # note the file extension matches the pandoc format name
                 output_path = tempfile.NamedTemporaryFile().name
-                output_path += "." + oformat
+                # If a specific output format not specified in transformation, default to pandoc format name
+                if oext is None:
+                    output_path += "." + oformat
+                else:
+                    output_path += "." + oext
                 args.extend(['-o', output_path])
 
         cmd.extend(args)
