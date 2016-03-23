@@ -170,7 +170,7 @@ class PandocCommand(sublime_plugin.TextCommand):
                 region = sublime.Region(0, view.size())
             else:
                 view = self.view
-            view.replace(edit, region, result.decode('utf8'))
+            view.replace(edit, region, result.decode('utf8').replace('\r\n','\n'))
             view.set_syntax_file(transformation['syntax_file'])
 
 
