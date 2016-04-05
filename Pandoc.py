@@ -143,7 +143,11 @@ class PandocCommand(sublime_plugin.TextCommand):
         cmd.extend(args)
 
         # run pandoc
-        working_dir = os.path.dirname(self.view.file_name())
+        current_file_path = self.view.file_name()
+        if current_file_path:
+            working_dir = os.path.dirname(current_file_path)
+        else:
+            working_dir = None
         process = subprocess.Popen(
             cmd, shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
             stderr=subprocess.PIPE, cwd=working_dir)
