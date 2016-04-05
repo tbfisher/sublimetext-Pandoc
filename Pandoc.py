@@ -143,9 +143,10 @@ class PandocCommand(sublime_plugin.TextCommand):
         cmd.extend(args)
 
         # run pandoc
+        working_dir = os.path.dirname(self.view.file_name())
         process = subprocess.Popen(
             cmd, shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE)
+            stderr=subprocess.PIPE, cwd=working_dir)
         result, error = process.communicate(contents.encode('utf-8'))
 
         # handle pandoc errors
