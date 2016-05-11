@@ -67,6 +67,8 @@
         "pandoc-arguments": [
           "-t", "pdf"
           // use --latex-engine=engine where engine is
+          // For OS X users, change the latex engine path should be 
+          // "--latex-engine=/usr/local/texlive/2015/bin/x86_64-darwin/pdflatex"
           // pdflatex|lualatex|xelatex. This may need to be specified with a
           // full path, e.g. on a mac with BasicTeX
           // "--latex-engine=/usr/texbin/pdflatex"
