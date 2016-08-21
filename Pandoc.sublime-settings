@@ -70,6 +70,8 @@
           // pdflatex|lualatex|xelatex. This may need to be specified with a
           // full path, e.g. on a mac with BasicTeX
           // "--latex-engine=/usr/texbin/pdflatex"
+          // or on Windows with MiKTeX
+          // "--latex-engine=C:/Program Files (x86)/MiKTeX 2.9/miktex/bin/pdflatex.exe"
           // if -o or --output missing, will write to a temporary file
           // "--output=~/Downloads/output.pdf"
         ]
@@ -96,7 +98,6 @@
           "-V", "geometry:margin=1.25in", 
           "-s", "--toc", "--number-sections", "--parse-raw",
           "-t", "pdf",
-          "--latex-engine=C:/Program Files (x86)/MiKTeX 2.9/miktex/bin/pdflatex.exe"
         ],
       },
 
@@ -108,8 +109,7 @@
         "pandoc-arguments": [
           "-s", "--toc", "--number-sections", "--parse-raw",
           "-t", "pdf",
-          "--latex-engine=C:/Program Files (x86)/MiKTeX 2.9/miktex/bin/pdflatex.exe"
-        ],
+         ],
       },
 
       "HTML TOC": {
@@ -145,7 +145,6 @@
         },
         "pandoc-arguments": [
           "-t", "beamer",
-          "--latex-engine=C:/Program Files (x86)/MiKTeX 2.9/miktex/bin/pdflatex.exe"
         ]
       },
       
@@ -156,7 +155,6 @@
         },
         "pandoc-arguments": [
           "-t", "slidy", "-s", "--self-contained",
-          "--latex-engine=C:/Program Files (x86)/MiKTeX 2.9/miktex/bin/pdflatex.exe"
         ]
       },
     },
