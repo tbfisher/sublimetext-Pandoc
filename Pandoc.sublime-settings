@@ -38,7 +38,7 @@
         // @see http://johnmacfarlane.net/pandoc/README.html#options
         "pandoc-arguments": [
           "--to=markdown",
-          "--no-wrap",
+          "--wrap=none",
           "--atx-headers"
         ]
       },
