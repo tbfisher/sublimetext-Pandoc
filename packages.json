@@ -23,7 +23,7 @@
         },
         {
           "sublime_text": ">=3000",
-          "details": "https://github.com/tbfisher/sublimetext-Pandoc/tree/master"
+          "details": "https://github.com/tbfisher/sublimetext-Pandoc/tree/2.x"
         }
       ]
     }
