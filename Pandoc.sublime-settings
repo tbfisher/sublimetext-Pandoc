@@ -64,6 +64,9 @@
           "text.html": "html",
           "text.html.markdown": "markdown"
         },
+        // use to place the output in the same directory as the curent file
+        // if -o or --output are set in "pandoc-arguments" this is ignored
+        // "out-local": true,
         "pandoc-arguments": [
           "-t", "pdf"
           // use --latex-engine=engine where engine is
@@ -95,7 +98,7 @@
           "text.html.markdown": "markdown",
           },
         "pandoc-arguments": [
-          "-V", "geometry:margin=1.25in", 
+          "-V", "geometry:margin=1.25in",
           "-s", "--toc", "--number-sections", "--parse-raw",
           "-t", "pdf",
         ],
@@ -147,7 +150,7 @@
           "-t", "beamer",
         ]
       },
-      
+
       "s5 Slides": {
         "scope": {
           "text.html": "html",
