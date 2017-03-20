@@ -30,6 +30,10 @@ import subprocess
 import tempfile
 import os
 
+try:
+    from.Edit import Edit as Edit
+except:
+    from Edit import Edit as Edit
 
 class PromptPandocCommand(sublime_plugin.WindowCommand):
 
@@ -98,6 +102,9 @@ class PandocCommand(sublime_plugin.TextCommand):
             return
         cmd = [pandoc]
 
+
+        # cmd.extend(["Masterarbeit.n"])  # hier muss der richtige file name übergeben werden
+
         # from format
         score = 0
         for scope, c_iformat in transformation['scope'].items():
@@ -127,32 +134,12 @@ class PandocCommand(sublime_plugin.TextCommand):
             args = args.remove(
                 short=['t', 'w'], long=['to', 'write'], values=['pdf'])
 
-        # output file locally
-        try:
-            transformation['out-local']
-        except:
-            argslocal = None
-        else:
-            argslocal = transformation['out-local']
-
-        # get current file path
-        current_file_path = self.view.file_name()
-        if current_file_path:
-            working_dir = os.path.dirname(current_file_path)
-            file_name = os.path.splitext(current_file_path)[0]
-        else:
-            working_dir = None
-            file_name = None
-
         # if write to file, add -o if necessary, set file path to output_path
         if oformat is not None and oformat in _s('pandoc-format-file'):
             output_path = args.get(short=['o'], long=['output'])
             if output_path is None:
                 # note the file extension matches the pandoc format name
-                if argslocal and file_name:
-                    output_path = file_name
-                else:
-                    output_path = tempfile.NamedTemporaryFile().name
+                output_path = tempfile.NamedTemporaryFile().name
                 # If a specific output format not specified in transformation, default to pandoc format name
                 if oext is None:
                     output_path += "." + oformat
@@ -163,10 +150,22 @@ class PandocCommand(sublime_plugin.TextCommand):
         cmd.extend(args)
 
         # run pandoc
-        process = subprocess.Popen(
-            cmd, shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE, cwd=working_dir)
-        result, error = process.communicate(contents.encode('utf-8'))
+        current_file_path = self.view.file_name()
+        if current_file_path:
+            working_dir = os.path.dirname(current_file_path)
+        else:
+            working_dir = None
+
+
+        sublime.set_timeout_async(lambda: self.pass_to_pandoc(cmd, working_dir, contents, oformat, transformation), 0)
+
+        # write pandoc command to console
+        print(' '.join(cmd))
+
+
+    def pass_to_pandoc(self, cmd, working_dir, contents, oformat, transformation):
+        process = subprocess.Popen(cmd, shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=working_dir)
+        result, error = process.communicate(contents.encode('utf-8'))  # always waits for the output (buffering). But this is not a problem in a threaded enviroment like sublime.set_timeout_async!
 
         # handle pandoc errors
         if error:
@@ -176,10 +175,7 @@ class PandocCommand(sublime_plugin.TextCommand):
                 error.decode('utf-8').strip()]))
             return
 
-        # write pandoc command to console
-        print(' '.join(cmd))
-
-        # if write to file, open
+       # if write to file, open
         if oformat is not None and oformat in _s('pandoc-format-file'):
             try:
                 if sublime.platform() == 'osx':
@@ -201,8 +197,12 @@ class PandocCommand(sublime_plugin.TextCommand):
                 region = sublime.Region(0, view.size())
             else:
                 view = self.view
-            view.replace(edit, region, result.decode('utf8').replace('\r\n', '\n'))
+
+            with Edit(view) as edit:
+                edit.replace(region, result.decode('utf8').replace('\r\n','\n'))
+
             view.set_syntax_file(transformation['syntax_file'])
+
 
 
 def _find_binary(name, default=None):
@@ -262,7 +262,6 @@ def _c(item):
 
 
 class Args(list):
-
     '''Process Pandoc arguments.
 
     "short" are of the form "-k val""".
