@@ -157,13 +157,13 @@ class PandocCommand(sublime_plugin.TextCommand):
             working_dir = None
 
 
-        sublime.set_timeout_async(lambda: self.pass_to_pandoc(cmd, working_dir, contents, oformat, transformation), 0)
+        sublime.set_timeout_async(lambda: self.pass_to_pandoc(cmd, working_dir, contents, oformat, transformation, output_path), 0)
 
         # write pandoc command to console
         print(' '.join(cmd))
 
 
-    def pass_to_pandoc(self, cmd, working_dir, contents, oformat, transformation):
+    def pass_to_pandoc(self, cmd, working_dir, contents, oformat, transformation, output_path):
         process = subprocess.Popen(cmd, shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=working_dir)
         result, error = process.communicate(contents.encode('utf-8'))  # always waits for the output (buffering). But this is not a problem in a threaded enviroment like sublime.set_timeout_async!
 
