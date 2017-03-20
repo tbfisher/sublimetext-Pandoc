@@ -135,6 +135,7 @@ class PandocCommand(sublime_plugin.TextCommand):
                 short=['t', 'w'], long=['to', 'write'], values=['pdf'])
 
         # if write to file, add -o if necessary, set file path to output_path
+        output_path = None
         if oformat is not None and oformat in _s('pandoc-format-file'):
             output_path = args.get(short=['o'], long=['output'])
             if output_path is None:
