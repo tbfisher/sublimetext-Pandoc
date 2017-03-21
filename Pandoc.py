@@ -198,6 +198,7 @@ class PandocCommand(sublime_plugin.TextCommand):
                 region = sublime.Region(0, view.size())
             else:
                 view = self.view
+                region = sublime.Region(0, view.size())
 
             with Edit(view) as edit:
                 edit.replace(region, result.decode('utf8').replace('\r\n','\n'))
