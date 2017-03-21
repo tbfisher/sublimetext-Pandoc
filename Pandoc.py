@@ -29,7 +29,10 @@ import re
 import subprocess
 import tempfile
 import os
-
+try:
+    from.Edit import Edit as Edit
+except:
+    from Edit import Edit as Edit
 
 class PromptPandocCommand(sublime_plugin.WindowCommand):
 
@@ -145,6 +148,7 @@ class PandocCommand(sublime_plugin.TextCommand):
             file_name = None
 
         # if write to file, add -o if necessary, set file path to output_path
+        output_path = None
         if oformat is not None and oformat in _s('pandoc-format-file'):
             output_path = args.get(short=['o'], long=['output'])
             if output_path is None:
@@ -163,10 +167,16 @@ class PandocCommand(sublime_plugin.TextCommand):
         cmd.extend(args)
 
         # run pandoc
-        process = subprocess.Popen(
-            cmd, shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE, cwd=working_dir)
-        result, error = process.communicate(contents.encode('utf-8'))
+
+        sublime.set_timeout_async(lambda: self.pass_to_pandoc(cmd, working_dir, contents, oformat, transformation, output_path), 0)
+
+        # write pandoc command to console
+        print(' '.join(cmd))
+
+
+    def pass_to_pandoc(self, cmd, working_dir, contents, oformat, transformation, output_path):
+        process = subprocess.Popen(cmd, shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=working_dir)
+        result, error = process.communicate(contents.encode('utf-8'))  # always waits for the output (buffering). But this is not a problem in a threaded enviroment like sublime.set_timeout_async!
 
         # handle pandoc errors
         if error:
@@ -175,9 +185,6 @@ class PandocCommand(sublime_plugin.TextCommand):
                 ' '.join(cmd),
                 error.decode('utf-8').strip()]))
             return
-
-        # write pandoc command to console
-        print(' '.join(cmd))
 
         # if write to file, open
         if oformat is not None and oformat in _s('pandoc-format-file'):
@@ -201,7 +208,11 @@ class PandocCommand(sublime_plugin.TextCommand):
                 region = sublime.Region(0, view.size())
             else:
                 view = self.view
-            view.replace(edit, region, result.decode('utf8').replace('\r\n', '\n'))
+                region = sublime.Region(0, view.size())
+
+            with Edit(view) as edit:
+                edit.replace(region, result.decode('utf8').replace('\r\n','\n'))
+
             view.set_syntax_file(transformation['syntax_file'])
 
 
