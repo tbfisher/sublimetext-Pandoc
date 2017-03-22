@@ -81,6 +81,15 @@ class PromptPandocCommand(sublime_plugin.WindowCommand):
         })
 
 
+class BuildPandocCommand(sublime_plugin.WindowCommand):
+
+    def run(self, transformation):
+
+        transformation = _s('transformations')[transformation]
+        self.window.active_view().run_command('pandoc', {'transformation': transformation })
+
+
+
 class PandocCommand(sublime_plugin.TextCommand):
 
     '''Transforms using Pandoc.'''

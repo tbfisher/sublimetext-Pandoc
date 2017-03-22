@@ -1,0 +1,12 @@
+{
+
+	"selector": "text.html.markdown",
+	"target": "build_pandoc",
+	"transformation": "HTML",
+
+	"variants":
+		[
+	    { "name": "Run", "transformation": "PDF" },
+	  ]
+
+}
