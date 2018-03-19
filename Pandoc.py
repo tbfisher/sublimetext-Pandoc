@@ -38,12 +38,14 @@ class PromptPandocCommand(sublime_plugin.WindowCommand):
     @see Default.sublime-commands'''
 
     options = []
+    last_selected = 0
 
     def run(self):
         if self.window.active_view():
             self.window.show_quick_panel(
                 self.transformations(),
-                self.transform)
+                self.transform,
+                selected_index=self.last_selected)
 
     def transformations(self):
         '''Generates a ranked list of available transformations.'''
@@ -75,6 +77,7 @@ class PromptPandocCommand(sublime_plugin.WindowCommand):
     def transform(self, i):
         if i == -1:
             return
+        self.last_selected = i
         transformation = _s('transformations')[self.options[i]]
         self.window.active_view().run_command('pandoc', {
             'transformation': transformation
