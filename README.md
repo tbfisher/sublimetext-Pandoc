@@ -2,6 +2,10 @@
 
 A [Sublime Text](http://www.sublimetext.com/) plugin that uses [Pandoc](http://johnmacfarlane.net/pandoc/) to convert text from one markup format into another. Pandoc can convert documents in markdown, reStructuredText, textile, HTML, DocBook, LaTeX, MediaWiki markup, TWiki markup, OPML, Emacs Org-Mode, Txt2Tags, Microsoft Word docx, LibreOffice ODT, EPUB, or Haddock markup to XHTML, HTML5, HTML slide shows using Slidy, reveal.js, Slideous, S5, or DZSlides, Microsoft Word docx, OpenOffice/LibreOffice ODT, OpenDocument XML, EPUB version 2 or 3, FictionBook2, DocBook, TEI Simple, GNU TexInfo, Groff man pages, Haddock markup, InDesign ICML, OPML, LaTeX, ConTeXt, LaTeX Beamer slides, PDF via LaTeX, Markdown (including CommonMark), reStructuredText, AsciiDoc, MediaWiki markup, DokuWiki markup, Emacs Org-Mode, Textile, or custom writers can be written in lua.
 
+## Looking for Maintainers
+
+If you use this and have any interest in helping to maintain it, please get in touch.
+
 ## Installation
 
 You need to [install Pandoc](http://johnmacfarlane.net/pandoc/installing.html), and this module:
