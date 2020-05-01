@@ -95,11 +95,11 @@
       "PDF TOC (Narrow margins)": {
         "scope": {
           "text.html": "html",
-          "text.html.markdown": "markdown",
+          "text.html.markdown": "markdown+raw_html",
           },
         "pandoc-arguments": [
           "-V", "geometry:margin=1.25in",
-          "-s", "--toc", "--number-sections", "--parse-raw",
+          "-s", "--toc", "--number-sections",
           "-t", "pdf",
         ],
       },
@@ -107,10 +107,10 @@
       "PDF TOC": {
         "scope": {
           "text.html": "html",
-          "text.html.markdown": "markdown",
+          "text.html.markdown": "markdown+raw_html",
           },
         "pandoc-arguments": [
-          "-s", "--toc", "--number-sections", "--parse-raw",
+          "-s", "--toc", "--number-sections",
           "-t", "pdf",
          ],
       },
