@@ -29,6 +29,10 @@ import re
 import subprocess
 import tempfile
 import os
+import threading
+
+from .thread_progress import ThreadProgress
+from .edit import Edit
 
 
 class PromptPandocCommand(sublime_plugin.WindowCommand):
@@ -148,6 +152,7 @@ class PandocCommand(sublime_plugin.TextCommand):
             file_name = None
 
         # if write to file, add -o if necessary, set file path to output_path
+        output_path = None
         if oformat is not None and oformat in _s('pandoc-format-file'):
             output_path = args.get(short=['o'], long=['output'])
             if output_path is None:
@@ -165,47 +170,74 @@ class PandocCommand(sublime_plugin.TextCommand):
 
         cmd.extend(args)
 
+        # write pandoc command to console
+        print(' '.join(cmd))
+
+        thread = PandocThread(
+            cmd, working_dir, contents, oformat, output_path, transformation,
+            self.view)
+        thread.start()
+        ThreadProgress(thread, 'Running Pandoc', 'Done!')
+
+
+class PandocThread(threading.Thread):
+    def __init__(self, cmd, working_dir, contents, oformat, output_path,
+                 transformation, view):
+        super().__init__()
+        self.cmd = cmd
+        self.working_dir = working_dir
+        self.contents = contents
+        self.oformat = oformat
+        self.output_path = output_path
+        self.transformation = transformation
+        self.view = view
+
+    def run(self):
         # run pandoc
         process = subprocess.Popen(
-            cmd, shell=False, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE, cwd=working_dir)
-        result, error = process.communicate(contents.encode('utf-8'))
+            self.cmd, shell=False, stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+            cwd=self.working_dir)
+        result, error = process.communicate(self.contents.encode('utf-8'))
 
         # handle pandoc errors
         if error:
             sublime.error_message('\n\n'.join([
                 'Error when running:',
-                ' '.join(cmd),
+                ' '.join(self.cmd),
                 error.decode('utf-8').strip()]))
             return
 
-        # write pandoc command to console
-        print(' '.join(cmd))
-
         # if write to file, open
-        if oformat is not None and oformat in _s('pandoc-format-file'):
+        if self.oformat is not None and \
+           self.oformat in _s('pandoc-format-file'):
             try:
                 if sublime.platform() == 'osx':
-                    subprocess.call(["open", output_path])
+                    subprocess.call(["open", self.output_path])
                 elif sublime.platform() == 'windows':
-                    os.startfile(output_path)
+                    os.startfile(self.output_path)
                 elif os.name == 'posix':
-                    subprocess.call(('xdg-open', output_path))
+                    subprocess.call(('xdg-open', self.output_path))
             except:
-                sublime.message_dialog('Wrote to file ' + output_path)
+                sublime.message_dialog('Wrote to file ' + self.output_path)
             return
 
         # write to buffer
         if result:
-            if transformation['new-buffer']:
+            if self.transformation['new-buffer']:
                 w = self.view.window()
                 w.new_file()
                 view = w.active_view()
                 region = sublime.Region(0, view.size())
             else:
                 view = self.view
-            view.replace(edit, region, result.decode('utf8').replace('\r\n', '\n'))
-            view.set_syntax_file(transformation['syntax_file'])
+                region = sublime.Region(0, view.size())
+
+            with Edit(view) as edit:
+                edit.replace(
+                    region, result.decode('utf8').replace('\r\n', '\n'))
+
+            view.set_syntax_file(self.transformation['syntax_file'])
 
 
 def _find_binary(name, default=None):

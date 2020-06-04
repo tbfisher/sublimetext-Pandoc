@@ -60,23 +60,26 @@ class ThreadProgress():
         active_view = self.window.active_view()
 
         if self.last_view is not None and active_view != self.last_view:
-            self.last_view.erase_status('_sublimetext')
+            self.last_view.erase_status('_pandoc')
             self.last_view = None
 
         if not self.thread.is_alive():
             def cleanup():
-                active_view.erase_status('_sublimetext')
+                active_view.erase_status('_pandoc')
             if hasattr(self.thread, 'result') and not self.thread.result:
                 cleanup()
                 return
-            active_view.set_status('_sublimetext', self.success_message)
+            active_view.set_status('_pandoc', self.success_message)
             sublime.set_timeout(cleanup, 1000)
             return
 
         before = i % self.size
         after = (self.size - 1) - before
 
-        active_view.set_status('_sublimetext', '%s [%s=%s]' % (self.message, ' ' * before, ' ' * after))
+        active_view.set_status(
+            '_pandoc',
+            '%s [%s=%s]' % (self.message, ' ' * before, ' ' * after)
+        )
         if self.last_view is None:
             self.last_view = active_view
 
