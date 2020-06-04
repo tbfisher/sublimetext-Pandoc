@@ -238,6 +238,7 @@ class PandocThread(threading.Thread):
                     region, result.decode('utf8').replace('\r\n', '\n'))
 
             view.set_syntax_file(self.transformation['syntax_file'])
+            view.sel().clear()
 
 
 def _find_binary(name, default=None):
