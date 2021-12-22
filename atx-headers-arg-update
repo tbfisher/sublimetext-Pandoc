@@ -39,7 +39,7 @@
         "pandoc-arguments": [
           "--to=markdown",
           "--wrap=none",
-          "--atx-headers"
+          "--markdown-headings=atx"
         ]
       },
 
